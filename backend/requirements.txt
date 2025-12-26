@@ -1,0 +1,33 @@
+# Octo Backend - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# GitHub API Library
+# PyGithub allows us to interact with GitHub's REST API
+# Docs: https://pygithub.readthedocs.io/
+PyGithub>=2.1.1
+
+# Environment Variable Management
+# python-dotenv loads variables from .env files
+# Docs: https://pypi.org/project/python-dotenv/
+python-dotenv>=1.0.0
+
+# Web Framework
+# FastAPI is a modern, fast web framework for building APIs
+# Docs: https://fastapi.tiangolo.com/
+fastapi>=0.109.0
+
+# ASGI Server
+# Uvicorn is a lightning-fast ASGI server for running FastAPI
+# Docs: https://www.uvicorn.org/
+uvicorn[standard]>=0.27.0
+
+# Data Validation (comes with FastAPI but listed for clarity)
+# Pydantic provides data validation using Python type hints
+pydantic>=2.5.0
+
+# HTTP Client (used by PyGithub internally)
+requests>=2.31.0
+
+# Type checking (optional, for development)
+# mypy>=1.8.0
+# types-requests>=2.31.0
