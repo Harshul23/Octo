@@ -1,16 +1,32 @@
 """
-Issue Hunter Module - Step 2 of Octo Project
+Issue Hunter Module - Feature 2 of Octo 🐙
 
-This module provides functionality to find "unclaimed" GitHub issues
-that are good candidates for contribution.
+Finds good candidate GitHub issues to contribute to.
+
+Criteria:
+- Open issues
+- No assignee
+- Low discussion: comments < 3
+- Excludes labels: wontfix, duplicate, invalid
+- Excludes issues that are PRs or have linked PRs (best-effort)
+
+Usage:
+    export GITHUB_TOKEN=ghp_xxx
+    python backend/hunter.py
 """
 
-from typing import Optional
+from __future__ import annotations
+
+from typing import Any, Iterable, Optional
 from dataclasses import dataclass
 from github import Github, Auth
 from github.Issue import Issue
 from github.Repository import Repository
 from github.GithubException import GithubException, RateLimitExceededException
+
+
+# Default labels to exclude
+DEFAULT_EXCLUDED_LABELS: set[str] = {"wontfix", "duplicate", "invalid"}
 
 
 @dataclass
@@ -29,6 +45,28 @@ class IssueCandidate:
         return f"IssueCandidate(#{self.issue.number}: {self.title[:50]}...)"
 
 
+@dataclass(frozen=True)
+class IssueDict:
+    """Typed container for issue dictionaries (clean output format)."""
+    title: str
+    number: int
+    repo_name: str
+    url: str
+    body: str
+    labels: list[str]
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to plain dictionary."""
+        return {
+            "title": self.title,
+            "number": self.number,
+            "repo_name": self.repo_name,
+            "url": self.url,
+            "body": self.body,
+            "labels": self.labels,
+        }
+
+
 class IssueHunter:
     """
     Hunts for unclaimed GitHub issues that are good candidates for contribution.
@@ -36,41 +74,48 @@ class IssueHunter:
     Uses PyGitHub to fetch and filter issues based on strict criteria:
     - Issue must be open
     - Issue must have no assignee
-    - Issue must have low comment count (configurable)
+    - Issue must have low comment count (< 3 by default)
+    - Issue must not have excluded labels (wontfix, duplicate, invalid)
     - Issue must have no linked Pull Requests
     
     Attributes:
         github: Authenticated PyGitHub instance
-        max_comments: Maximum number of comments for an issue to be considered (default: 3)
+        max_comments: Maximum number of comments for an issue to be considered
+        excluded_labels: Set of label names to exclude (case-insensitive)
         
     Example:
         >>> hunter = IssueHunter(github_token="ghp_xxx")
-        >>> candidates = hunter.get_candidate_issues(["facebook/react", "vercel/next.js"])
-        >>> for candidate in candidates:
-        ...     print(candidate.title, candidate.url)
+        >>> candidates = hunter.hunt(["fastapi/fastapi", "tiangolo/typer"])
+        >>> for c in candidates:
+        ...     print(c["title"], c["url"])
     """
     
     def __init__(
         self,
         github_token: str,
-        max_comments: int = 3,
-        per_page: int = 30
+        *,
+        max_comments: int = 2,
+        excluded_labels: Optional[Iterable[str]] = None,
+        per_page: int = 50,
     ) -> None:
         """
         Initialize the IssueHunter with GitHub authentication.
         
         Args:
             github_token: GitHub personal access token for API authentication
-            max_comments: Maximum number of comments allowed on an issue (default: 3)
-            per_page: Number of issues to fetch per API page (default: 30)
-            
-        API Calls:
-            - None during initialization
+            max_comments: Max allowed comments (default: 2, meaning < 3)
+            excluded_labels: Additional labels to exclude (case-insensitive)
+            per_page: Number of issues to fetch per API page (default: 50)
         """
         auth = Auth.Token(github_token)
         self.github: Github = Github(auth=auth, per_page=per_page)
         self.max_comments: int = max_comments
         self.per_page: int = per_page
+        # Merge default excluded labels with any custom ones
+        self.excluded_labels: set[str] = {
+            *(label.lower() for label in (excluded_labels or [])),
+            *DEFAULT_EXCLUDED_LABELS,
+        }
     
     def _get_repository(self, repo_name: str) -> Optional[Repository]:
         """
@@ -81,14 +126,12 @@ class IssueHunter:
             
         Returns:
             Repository object if found, None otherwise
-            
-        API Calls:
-            - GET /repos/{owner}/{repo}
         """
         try:
             return self.github.get_repo(repo_name)
         except GithubException as e:
-            print(f"[ERROR] Failed to fetch repository '{repo_name}': {e.data.get('message', str(e))}")
+            msg = getattr(e, "data", {}) or {}
+            print(f"[ERROR] Failed to fetch repository '{repo_name}': {msg.get('message', str(e))}")
             return None
     
     def _fetch_open_issues(
@@ -97,17 +140,16 @@ class IssueHunter:
         labels: Optional[list[str]] = None
     ) -> list[Issue]:
         """
-        Fetch all open issues from a repository.
+        Fetch all open issues from a repository (excluding PRs).
+        
+        GitHub API returns PRs in issues list; we filter them out.
         
         Args:
             repo: Repository object to fetch issues from
-            labels: Optional list of label names to filter by (e.g., ["good first issue"])
+            labels: Optional list of label names to filter by
             
         Returns:
-            List of open Issue objects
-            
-        API Calls:
-            - GET /repos/{owner}/{repo}/issues?state=open
+            List of open Issue objects (not PRs)
         """
         try:
             if labels:
@@ -121,54 +163,34 @@ class IssueHunter:
             print(f"[ERROR] GitHub API rate limit exceeded while fetching issues from '{repo.full_name}'")
             return []
         except GithubException as e:
-            print(f"[ERROR] Failed to fetch issues from '{repo.full_name}': {e.data.get('message', str(e))}")
+            msg = getattr(e, "data", {}) or {}
+            print(f"[ERROR] Failed to fetch issues from '{repo.full_name}': {msg.get('message', str(e))}")
             return []
     
     def _has_no_assignee(self, issue: Issue) -> bool:
-        """
-        Check if an issue has no assignee.
-        
-        Args:
-            issue: Issue object to check
-            
-        Returns:
-            True if issue has no assignee, False otherwise
-            
-        API Calls:
-            - None (uses cached issue data)
-        """
+        """Check if an issue has no assignee."""
         return issue.assignee is None and len(issue.assignees) == 0
     
     def _has_low_comments(self, issue: Issue) -> bool:
-        """
-        Check if an issue has a low comment count.
-        
-        Args:
-            issue: Issue object to check
-            
-        Returns:
-            True if comment count is below max_comments threshold
-            
-        API Calls:
-            - None (uses cached issue data)
-        """
-        return issue.comments < self.max_comments
+        """Check if an issue has low comment count (< 3 by default)."""
+        return issue.comments <= self.max_comments
+    
+    def _has_excluded_labels(self, issue: Issue) -> bool:
+        """Check if an issue has any excluded labels (case-insensitive)."""
+        label_names = {lbl.name.lower() for lbl in issue.labels}
+        return any(name in self.excluded_labels for name in label_names)
     
     def _has_no_linked_prs(self, issue: Issue) -> bool:
         """
-        Check if an issue has no linked Pull Requests by examining its timeline.
+        Best-effort check via timeline to detect linked PRs.
         
-        This is an advanced check that looks at the issue's timeline events
-        to detect if any PRs have been opened that reference this issue.
+        If rate-limited or error, conservatively assume there may be PRs.
         
         Args:
             issue: Issue object to check
             
         Returns:
             True if no PRs are linked to this issue, False otherwise
-            
-        API Calls:
-            - GET /repos/{owner}/{repo}/issues/{issue_number}/timeline
         """
         try:
             timeline = issue.get_timeline()
@@ -176,9 +198,8 @@ class IssueHunter:
             for event in timeline:
                 # Check for cross-referenced events (PRs linking to this issue)
                 if event.event == "cross-referenced":
-                    source = event.source
+                    source = getattr(event, "source", None)
                     if source and hasattr(source, "issue"):
-                        # Check if the source is a pull request
                         source_issue = source.issue
                         if source_issue and source_issue.pull_request is not None:
                             return False
@@ -186,22 +207,14 @@ class IssueHunter:
                 # Check for connected events (PRs explicitly linked via keywords)
                 elif event.event == "connected":
                     return False
-                
-                # Check for referenced events from commits in PRs
-                elif event.event == "referenced":
-                    # This could be from a commit, which might be in a PR
-                    # We'll be conservative and still allow these
-                    pass
                     
             return True
             
         except RateLimitExceededException:
             print(f"[WARN] Rate limit hit while checking timeline for issue #{issue.number}")
-            # Be conservative - assume there might be linked PRs
             return False
         except GithubException as e:
             print(f"[WARN] Failed to fetch timeline for issue #{issue.number}: {e}")
-            # Be conservative - assume there might be linked PRs
             return False
     
     def _is_unclaimed(self, issue: Issue, check_timeline: bool = True) -> bool:
@@ -210,25 +223,25 @@ class IssueHunter:
         
         An issue is considered unclaimed if:
         1. It has no assignee
-        2. It has a low comment count (< max_comments)
-        3. It has no linked Pull Requests (if check_timeline is True)
+        2. It has a low comment count (< 3)
+        3. It does NOT have excluded labels (wontfix, duplicate, invalid)
+        4. It has no linked Pull Requests (if check_timeline is True)
         
         Args:
             issue: Issue object to evaluate
             check_timeline: Whether to check for linked PRs (default: True)
-                           Set to False to save API calls
             
         Returns:
             True if issue passes all filters, False otherwise
-            
-        API Calls:
-            - GET /repos/{owner}/{repo}/issues/{issue_number}/timeline (if check_timeline)
         """
         # Quick filters first (no API calls)
         if not self._has_no_assignee(issue):
             return False
         
         if not self._has_low_comments(issue):
+            return False
+        
+        if self._has_excluded_labels(issue):
             return False
         
         # Expensive filter last (requires API call)
@@ -238,16 +251,7 @@ class IssueHunter:
         return True
     
     def _create_candidate(self, issue: Issue, repo_name: str) -> IssueCandidate:
-        """
-        Create an IssueCandidate dataclass from an Issue.
-        
-        Args:
-            issue: Issue object to convert
-            repo_name: Full repository name
-            
-        Returns:
-            IssueCandidate with extracted metadata
-        """
+        """Create an IssueCandidate dataclass from an Issue."""
         return IssueCandidate(
             issue=issue,
             repo_name=repo_name,
@@ -256,6 +260,17 @@ class IssueHunter:
             labels=[label.name for label in issue.labels],
             comments_count=issue.comments,
             created_at=issue.created_at.isoformat()
+        )
+    
+    def _to_issue_dict(self, issue: Issue, repo_name: str) -> IssueDict:
+        """Create a clean IssueDict from an Issue."""
+        return IssueDict(
+            title=issue.title,
+            number=issue.number,
+            repo_name=repo_name,
+            url=issue.html_url,
+            body=issue.body or "",
+            labels=[lbl.name for lbl in issue.labels],
         )
     
     def hunt_issues(
@@ -271,38 +286,22 @@ class IssueHunter:
         Args:
             repo_name: Full repository name in "owner/repo" format
             labels: Optional list of label names to filter by
-                   Common values: ["good first issue", "help wanted", "beginner"]
             max_issues: Maximum number of issues to process (default: 100)
             check_timeline: Whether to check for linked PRs (default: True)
             
         Returns:
             List of IssueCandidate objects that passed all filters
-            
-        API Calls:
-            - GET /repos/{owner}/{repo}
-            - GET /repos/{owner}/{repo}/issues?state=open
-            - GET /repos/{owner}/{repo}/issues/{issue_number}/timeline (per issue, if check_timeline)
-            
-        Example:
-            >>> candidates = hunter.hunt_issues(
-            ...     "facebook/react",
-            ...     labels=["good first issue"],
-            ...     max_issues=50
-            ... )
         """
         candidates: list[IssueCandidate] = []
         
-        # Fetch repository
         repo = self._get_repository(repo_name)
         if repo is None:
             return candidates
         
         print(f"[INFO] Hunting issues in '{repo_name}'...")
         
-        # Fetch open issues
         issues = self._fetch_open_issues(repo, labels)
         
-        # Process issues up to max_issues
         processed = 0
         for issue in issues:
             if processed >= max_issues:
@@ -310,7 +309,6 @@ class IssueHunter:
             
             processed += 1
             
-            # Apply filters
             if self._is_unclaimed(issue, check_timeline):
                 candidate = self._create_candidate(issue, repo_name)
                 candidates.append(candidate)
@@ -318,6 +316,45 @@ class IssueHunter:
         
         print(f"[INFO] Found {len(candidates)} unclaimed issues in '{repo_name}' (processed {processed})")
         return candidates
+    
+    def hunt_repo(
+        self,
+        repo_name: str,
+        *,
+        max_issues: int = 100,
+        check_timeline: bool = True,
+    ) -> list[dict[str, Any]]:
+        """
+        Hunt candidate issues in a single repository (returns clean dicts).
+        
+        Args:
+            repo_name: "owner/repo" string.
+            max_issues: Max issues to process.
+            check_timeline: Exclude issues with linked PRs if True.
+            
+        Returns:
+            List of issue dictionaries with: title, number, repo_name, url, body, labels
+        """
+        repo = self._get_repository(repo_name)
+        if repo is None:
+            return []
+        
+        print(f"[INFO] Hunting issues in '{repo_name}'...")
+        issues = self._fetch_open_issues(repo)
+        
+        results: list[dict[str, Any]] = []
+        processed = 0
+        
+        for issue in issues:
+            if processed >= max_issues:
+                break
+            processed += 1
+            
+            if self._is_unclaimed(issue, check_timeline):
+                results.append(self._to_issue_dict(issue, repo_name).to_dict())
+        
+        print(f"[INFO] Found {len(results)} candidates in '{repo_name}' (processed {processed})")
+        return results
     
     def get_candidate_issues(
         self,
@@ -327,31 +364,17 @@ class IssueHunter:
         check_timeline: bool = True
     ) -> list[IssueCandidate]:
         """
-        Get candidate issues from one or more repositories.
-        
-        This is the main entry point for finding unclaimed issues across
-        multiple repositories.
+        Get candidate issues from one or more repositories (IssueCandidate format).
         
         Args:
             repo_names: Single repo name or list of repo names in "owner/repo" format
             labels: Optional list of label names to filter by
-            max_issues_per_repo: Maximum issues to process per repository (default: 100)
-            check_timeline: Whether to check for linked PRs (default: True)
+            max_issues_per_repo: Maximum issues to process per repository
+            check_timeline: Whether to check for linked PRs
             
         Returns:
             List of IssueCandidate objects from all repositories
-            
-        API Calls:
-            - Per repository: see hunt_issues()
-            
-        Example:
-            >>> candidates = hunter.get_candidate_issues(
-            ...     ["facebook/react", "vercel/next.js", "microsoft/vscode"],
-            ...     labels=["good first issue", "help wanted"]
-            ... )
-            >>> print(f"Found {len(candidates)} total candidates")
         """
-        # Normalize input to list
         if isinstance(repo_names, str):
             repo_names = [repo_names]
         
@@ -373,15 +396,47 @@ class IssueHunter:
         print(f"\n[SUMMARY] Total candidates found: {len(all_candidates)} across {len(repo_names)} repositories")
         return all_candidates
     
+    def hunt(
+        self,
+        repo_names: Iterable[str],
+        *,
+        max_issues_per_repo: int = 100,
+        check_timeline: bool = True,
+    ) -> list[dict[str, Any]]:
+        """
+        Hunt candidate issues across multiple repositories (returns clean dicts).
+        
+        This is the main entry point that returns clean dictionaries.
+        
+        Args:
+            repo_names: Iterable of "owner/repo" strings.
+            max_issues_per_repo: Max issues per repository.
+            check_timeline: Exclude issues with linked PRs if True.
+            
+        Returns:
+            List of issue dictionaries with: title, number, repo_name, url, body, labels
+        """
+        all_results: list[dict[str, Any]] = []
+        repo_list = list(repo_names)
+        
+        for repo_name in repo_list:
+            try:
+                all_results.extend(
+                    self.hunt_repo(
+                        repo_name=repo_name,
+                        max_issues=max_issues_per_repo,
+                        check_timeline=check_timeline,
+                    )
+                )
+            except Exception as e:
+                print(f"[ERROR] Unexpected error for '{repo_name}': {e}")
+                continue
+        
+        print(f"[SUMMARY] Total candidates: {len(all_results)} across {len(repo_list)} repos")
+        return all_results
+    
     def close(self) -> None:
-        """
-        Close the GitHub connection and cleanup resources.
-        
-        Should be called when done using the IssueHunter.
-        
-        API Calls:
-            - None
-        """
+        """Close the GitHub connection and cleanup resources."""
         self.github.close()
     
     def __enter__(self) -> "IssueHunter":
@@ -398,7 +453,7 @@ def find_unclaimed_issues(
     github_token: str,
     repo_names: str | list[str],
     labels: Optional[list[str]] = None,
-    max_comments: int = 3,
+    max_comments: int = 2,
     max_issues_per_repo: int = 100,
     check_timeline: bool = True
 ) -> list[IssueCandidate]:
@@ -409,21 +464,14 @@ def find_unclaimed_issues(
         github_token: GitHub personal access token
         repo_names: Single repo or list of repos in "owner/repo" format
         labels: Optional label filter (e.g., ["good first issue"])
-        max_comments: Maximum comments threshold (default: 3)
-        max_issues_per_repo: Max issues to process per repo (default: 100)
-        check_timeline: Check for linked PRs (default: True)
+        max_comments: Maximum comments threshold (default: 2, meaning < 3)
+        max_issues_per_repo: Max issues to process per repo
+        check_timeline: Check for linked PRs
         
     Returns:
         List of IssueCandidate objects
-        
-    Example:
-        >>> issues = find_unclaimed_issues(
-        ...     github_token="ghp_xxx",
-        ...     repo_names="facebook/react",
-        ...     labels=["good first issue"]
-        ... )
     """
-    with IssueHunter(github_token, max_comments) as hunter:
+    with IssueHunter(github_token, max_comments=max_comments) as hunter:
         return hunter.get_candidate_issues(
             repo_names=repo_names,
             labels=labels,
@@ -435,27 +483,30 @@ def find_unclaimed_issues(
 if __name__ == "__main__":
     import os
     
-    # Example usage
+    # Get token from environment
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
         print("Please set GITHUB_TOKEN environment variable")
-        exit(1)
+        raise SystemExit(1)
     
-    # Find good first issues in popular repos
-    candidates = find_unclaimed_issues(
-        github_token=token,
-        repo_names=["microsoft/vscode", "facebook/react"],
-        labels=["good first issue"],
-        max_issues_per_repo=20
-    )
+    # Create hunter instance
+    hunter = IssueHunter(github_token=token)
+    
+    # Test with popular open source repos
+    repos = ["fastapi/fastapi", "tiangolo/typer"]
+    candidates = hunter.hunt(repos, max_issues_per_repo=50, check_timeline=True)
     
     print("\n" + "=" * 60)
-    print("UNCLAIMED ISSUES READY FOR CONTRIBUTION:")
+    print(f"CANDIDATE ISSUES ({len(candidates)} total)")
     print("=" * 60)
     
-    for candidate in candidates:
-        print(f"\n[{candidate.repo_name}] #{candidate.issue.number}")
-        print(f"  Title: {candidate.title}")
-        print(f"  Labels: {', '.join(candidate.labels)}")
-        print(f"  Comments: {candidate.comments_count}")
-        print(f"  URL: {candidate.url}")
+    for c in candidates[:20]:  # Show first 20
+        print(f"\n[{c['repo_name']}] #{c['number']} - {c['title']}")
+        print(f"  URL: {c['url']}")
+        print(f"  Labels: {', '.join(c['labels']) if c['labels'] else 'None'}")
+        if c['body']:
+            # Show first 150 chars of body
+            body_preview = c['body'][:150].replace('\n', ' ')
+            print(f"  Body: {body_preview}...")
+    
+    hunter.close()
