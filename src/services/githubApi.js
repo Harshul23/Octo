@@ -44,7 +44,7 @@ export const fetchUserRepositories = async (username, token, perPage = 100) => {
 // Fetch user's contribution data (requires GraphQL)
 export const fetchContributionData = async (username, token, fromDate, toDate) => {
   const query = `
-    query($userName:String!, $from:DateTime!, $to:DateTime!) {
+    query($userName:String!, $from:DateTime!, $to:DateTime!, $prQuery:String!, $issueQuery:String!) {
       user(login: $userName){
         contributionsCollection(from: $from, to: $to) {
           contributionCalendar {
@@ -59,8 +59,18 @@ export const fetchContributionData = async (username, token, fromDate, toDate) =
           }
         }
       }
+      prs: search(query: $prQuery, type: ISSUE, first: 0) {
+        issueCount
+      }
+      issues: search(query: $issueQuery, type: ISSUE, first: 0) {
+        issueCount
+      }
     }
   `;
+
+  // Format dates for search query (YYYY-MM-DD)
+  const fromStr = new Date(fromDate).toISOString().split('T')[0];
+  const toStr = new Date(toDate).toISOString().split('T')[0];
 
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
@@ -74,6 +84,8 @@ export const fetchContributionData = async (username, token, fromDate, toDate) =
         userName: username,
         from: fromDate,
         to: toDate,
+        prQuery: `author:${username} type:pr is:merged created:${fromStr}..${toStr}`,
+        issueQuery: `author:${username} type:issue is:closed created:${fromStr}..${toStr}`
       },
     }),
   });
@@ -83,7 +95,21 @@ export const fetchContributionData = async (username, token, fromDate, toDate) =
   }
 
   const data = await response.json();
-  return data.data.user.contributionsCollection.contributionCalendar;
+  
+  if (data.errors) {
+    console.error('GraphQL Errors:', data.errors);
+    // Fallback if search fails? Or just throw.
+    throw new Error(data.errors[0].message);
+  }
+
+  return {
+    calendar: data.data.user.contributionsCollection.contributionCalendar,
+    stats: {
+      prsMerged: data.data.prs.issueCount,
+      issuesSolved: data.data.issues.issueCount,
+      totalContributions: data.data.user.contributionsCollection.contributionCalendar.totalContributions
+    }
+  };
 };
 
 // Parse events into categorized activity

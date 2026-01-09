@@ -28,9 +28,15 @@ function Calendar({
   const resetToCurrentMonth = () => {
     setCurrentMonth(new Date())
   }
+  
 
   return (
     <div className="relative">
+
+      <div className="absolute -top-2 right-2">
+        <span className="text-xl top-2 right-88 absolute text-stone-300">Calender</span>
+      </div>
+
       {/* Reset to Current Month Button */}
       <div className="absolute -top-2 right-2">
         <Button
@@ -62,7 +68,7 @@ function Calendar({
           ...formatters,
         }}
         classNames={{
-          root: cn("rounded-3xl w-[28em] bg-black mx-0 py-12 my-5 mt-8 border-2 border-solid border-neutral-700", defaultClassNames.root),
+          root: cn("rounded-3xl w-full bg-black mx-0 py-3 my-1 mt-8 border-3 border-solid border-neutral-700", defaultClassNames.root),
           months: cn("flex gap-4 flex-col h-full scroll-auto overflow-hidden py-2 md:flex-row relative rounded-2xl bg-black", defaultClassNames.months),
           month: cn("flex flex-col w-full gap-2 bg-black rounded-2xl text-white p-2", defaultClassNames.month),
           nav: cn(

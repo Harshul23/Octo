@@ -1,6 +1,8 @@
+import { Routes, Route } from "react-router-dom"
 import Navbar from "./components/navbar.jsx"
 import Homepage from "./components/homepage.jsx"
 import LoginForm from "./components/login-form.jsx"
+import ExplorePage from "./components/explore/ExplorePage.jsx"
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx"
 
 const AppContent = () => {
@@ -27,7 +29,10 @@ const AppContent = () => {
   return (
     <div className="box-border bg-[#0a0a0a] h-screen w-full">
       <Navbar />
-      <Homepage />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/explore" element={<ExplorePage />} />
+      </Routes>
     </div>
   );
 };
