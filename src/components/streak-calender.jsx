@@ -177,9 +177,15 @@ const StreakCalendar = () => {
 
   return (
     <div className='w-full bg-[#1a1a1e] border border-white/5 rounded-3xl p-6 shadow-2xl font-sans'>
-
-      {/* Reset to Current Month Button */}
-      <div className="absolute top-24 right-10">
+      
+      {/* Header: Streak Stats */}
+      <div className='flex justify-between items-end mb-6 gap-5 w-full'>
+        <div>
+          <div className='flex items-center justify-between w-full gap-0 mb-1'>
+            <span className={`flex h-2 w-2 rounded-full ${streakData.currentStreak > 0 ? 'bg-orange-500 animate-pulse' : 'bg-stone-600'}`}></span>
+            <span className='text-[10px] font-black text-stone-500 uppercase tracking-widest'>Current Streak</span>
+            {/* Reset to Current Month Button */}
+      <div className=" top-24 right-10">
         <Button
           onClick={resetToCurrentMonth}
           variant="ghost"
@@ -191,13 +197,6 @@ const StreakCalendar = () => {
           Today
         </Button>
       </div>
-      
-      {/* Header: Streak Stats */}
-      <div className='flex justify-between items-end mb-6'>
-        <div>
-          <div className='flex items-center gap-2 mb-1'>
-            <span className={`flex h-2 w-2 rounded-full ${streakData.currentStreak > 0 ? 'bg-orange-500 animate-pulse' : 'bg-stone-600'}`}></span>
-            <span className='text-[10px] font-black text-stone-500 uppercase tracking-widest'>Current Streak</span>
           </div>
           <div className='flex items-center gap-3'>
             <h1 className='text-5xl font-black text-white leading-none'>{streakData.currentStreak}</h1>
@@ -218,8 +217,8 @@ const StreakCalendar = () => {
       <div className='flex justify-between items-center mb-4 px-2'>
         <span className='text-sm font-bold text-white'>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
         <div className='flex gap-1'>
-          <button onClick={handlePrevMonth} className='p-1 hover:bg-white/5 rounded-lg text-stone-400'><ChevronLeft size={16} /></button>
-          <button onClick={handleNextMonth} className='p-1 hover:bg-white/5 rounded-lg text-stone-400'><ChevronRight size={16} /></button>
+          <button onClick={handlePrevMonth} className='p-1 hover:bg-white/9 rounded-lg text-white font-black'><ChevronLeft size={16} /></button>
+          <button onClick={handleNextMonth} className='p-1 hover:bg-white/9 rounded-lg text-white font-black'><ChevronRight size={16} /></button>
         </div>
       </div>
 
@@ -244,11 +243,12 @@ const StreakCalendar = () => {
           return (
             <div key={day} className='relative flex items-center justify-center h-10 group'>
               
-              {/* STREAK CONNECTION LINE (Visual Glue) */}
-              {active && !(isStart && isEnd) && (
+              {/* STREAK CONNECTION BACKGROUND (Visual Glue) */}
+              {active && (
                 <div 
-                  className={`absolute top-1/2 -translate-y-1/2 h-[2px] border-t-2 border-dashed border-orange-500/40 z-0
-                    ${isStart ? 'left-1/2 w-1/2' : isEnd ? 'left-0 w-1/2' : 'left-0 w-full'}
+                  className={`absolute inset-0 bg-white/10 z-0
+                    ${isStart ? 'rounded-l-lg' : ''} 
+                    ${isEnd ? 'rounded-r-lg' : ''}
                   `}
                 />
               )}
@@ -293,11 +293,11 @@ const StreakCalendar = () => {
       {/* Intensity Legend */}
       <div className='flex items-center justify-center gap-2 mt-4'>
         <span className='text-[10px] text-stone-500'>Less</span>
-        <div className='w-3 h-3 rounded-sm bg-transparent border border-white/10'></div>
-        <div className='w-3 h-3 rounded-sm bg-green-900/50'></div>
-        <div className='w-3 h-3 rounded-sm bg-green-700/60'></div>
-        <div className='w-3 h-3 rounded-sm bg-green-500/70'></div>
-        <div className='w-3 h-3 rounded-sm bg-green-400/80'></div>
+        <div className='w-3 h-3 rounded-xs bg-transparent border border-white/10'></div>
+        <div className='w-3 h-3 rounded-xs bg-green-900/50'></div>
+        <div className='w-3 h-3 rounded-xs bg-green-700/60'></div>
+        <div className='w-3 h-3 rounded-xs bg-green-500/70'></div>
+        <div className='w-3 h-3 rounded-xs bg-green-400/80'></div>
         <span className='text-[10px] text-stone-500'>More</span>
       </div>
 

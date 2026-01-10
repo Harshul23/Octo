@@ -241,3 +241,124 @@ export const fetchRepositoryCommitStats = async (username, token, repos, since) 
   
   return commitStats.sort((a, b) => b.count - a.count);
 };
+
+// ==================== KANBAN BOARD API METHODS ====================
+
+// Fetch issues for a specific repository
+export const fetchRepoIssues = async (owner, repo, token, options = {}) => {
+  const { state = 'open', labels = '', assignee = '', per_page = 100 } = options;
+  let url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/issues?state=${state}&per_page=${per_page}`;
+  
+  if (labels) url += `&labels=${encodeURIComponent(labels)}`;
+  if (assignee) url += `&assignee=${encodeURIComponent(assignee)}`;
+  
+  const issues = await fetchWithAuth(url, token);
+  // Filter out pull requests (GitHub API returns PRs as issues too)
+  return issues.filter(issue => !issue.pull_request);
+};
+
+// Fetch pull requests for a specific repository
+export const fetchRepoPulls = async (owner, repo, token, options = {}) => {
+  const { state = 'open', per_page = 100 } = options;
+  return fetchWithAuth(
+    `${GITHUB_API_BASE}/repos/${owner}/${repo}/pulls?state=${state}&per_page=${per_page}`,
+    token
+  );
+};
+
+// Fetch all issues assigned to the authenticated user across all repos
+export const fetchAssignedIssues = async (token, options = {}) => {
+  const { state = 'open', per_page = 100 } = options;
+  return fetchWithAuth(
+    `${GITHUB_API_BASE}/issues?filter=assigned&state=${state}&per_page=${per_page}`,
+    token
+  );
+};
+
+// Fetch all issues created by the authenticated user
+export const fetchCreatedIssues = async (token, options = {}) => {
+  const { state = 'open', per_page = 100 } = options;
+  return fetchWithAuth(
+    `${GITHUB_API_BASE}/issues?filter=created&state=${state}&per_page=${per_page}`,
+    token
+  );
+};
+
+// Fetch all PRs for the authenticated user
+export const fetchUserPullRequests = async (username, token, options = {}) => {
+  const { state = 'open', type = 'author' } = options;
+  // type can be: author, assignee, mentions, review-requested
+  const query = `type:pr ${type}:${username} state:${state}`;
+  
+  const response = await fetch(`${GITHUB_API_BASE}/search/issues?q=${encodeURIComponent(query)}&per_page=100`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.items;
+};
+
+// Update an issue (labels, state, assignees, etc.)
+export const updateIssue = async (owner, repo, issueNumber, updates, token) => {
+  const response = await fetch(
+    `${GITHUB_API_BASE}/repos/${owner}/${repo}/issues/${issueNumber}`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.statusText}`);
+  }
+
+  return response.json();
+};
+
+// Fetch labels for a repository
+export const fetchRepoLabels = async (owner, repo, token) => {
+  return fetchWithAuth(
+    `${GITHUB_API_BASE}/repos/${owner}/${repo}/labels?per_page=100`,
+    token
+  );
+};
+
+// Fetch milestones for a repository
+export const fetchRepoMilestones = async (owner, repo, token, state = 'open') => {
+  return fetchWithAuth(
+    `${GITHUB_API_BASE}/repos/${owner}/${repo}/milestones?state=${state}&per_page=100`,
+    token
+  );
+};
+
+// Search issues across repositories
+export const searchIssues = async (query, token, options = {}) => {
+  const { per_page = 30, page = 1 } = options;
+  const response = await fetch(
+    `${GITHUB_API_BASE}/search/issues?q=${encodeURIComponent(query)}&per_page=${per_page}&page=${page}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.statusText}`);
+  }
+
+  return response.json();
+};

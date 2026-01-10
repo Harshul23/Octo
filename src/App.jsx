@@ -3,6 +3,7 @@ import Navbar from "./components/navbar.jsx"
 import Homepage from "./components/homepage.jsx"
 import LoginForm from "./components/login-form.jsx"
 import ExplorePage from "./components/explore/ExplorePage.jsx"
+import { KanbanPage } from "./components/kanban"
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx"
 
 const AppContent = () => {
@@ -32,6 +33,7 @@ const AppContent = () => {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/dashboard" element={<KanbanPage />} />
       </Routes>
     </div>
   );

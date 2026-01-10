@@ -24,7 +24,7 @@ const ExplorePage = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex gap-6 overflow-hidden">
+      <div className="flex-1 flex gap-6 mt-10 overflow-hidden">
         
         {/* Left:  Main Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-4">
