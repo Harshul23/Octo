@@ -1,40 +1,20 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import {
   fetchAssignedIssues,
   fetchCreatedIssues,
   fetchUserPullRequests,
-  fetchRepoIssues,
-  fetchRepoPulls,
 } from '../services/githubApi';
+import {
+  CARD_TYPES,
+  DEFAULT_COLUMNS,
+  STORAGE_KEYS,
+  generateId,
+  extractRepoFromUrl,
+} from '../lib/constants';
 
 const KanbanContext = createContext(null);
-
-// Default columns for the Kanban board
-const DEFAULT_COLUMNS = [
-  { id: 'backlog', title: 'Backlog', color: 'bg-gray-500' },
-  { id: 'todo', title: 'To Do', color: 'bg-blue-500' },
-  { id: 'in-progress', title: 'In Progress', color: 'bg-yellow-500' },
-  { id: 'review', title: 'In Review', color: 'bg-purple-500' },
-  { id: 'done', title: 'Done', color: 'bg-emerald-500' },
-];
-
-// Local storage keys
-const STORAGE_KEYS = {
-  COLUMNS: 'octo_kanban_columns',
-  CARDS: 'octo_kanban_cards',
-  SETTINGS: 'octo_kanban_settings',
-};
-
-// Generate unique ID
-const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-// Card types
-export const CARD_TYPES = {
-  ISSUE: 'issue',
-  PR: 'pull_request',
-  NOTE: 'note',
-};
 
 export function KanbanProvider({ children }) {
   const { user, getToken, isAuthenticated } = useAuth();
@@ -368,13 +348,6 @@ export function useKanban() {
     throw new Error('useKanban must be used within a KanbanProvider');
   }
   return context;
-}
-
-// Helper function to extract repo name from GitHub URL
-function extractRepoFromUrl(url) {
-  if (!url) return '';
-  const match = url.match(/github\.com\/([^/]+\/[^/]+)/);
-  return match ? match[1] : '';
 }
 
 export default KanbanContext;

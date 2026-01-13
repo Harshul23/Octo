@@ -16,7 +16,7 @@ const QuickTips = () => {
       setCurrentTip((prev) => (prev + 1) % tips.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [tips.length]);
 
   return (
     <div className="p-4 rounded-2xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20">

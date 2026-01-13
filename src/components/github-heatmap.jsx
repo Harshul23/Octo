@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchContributionData } from '@/services/githubApi';
-import QuickStats from './quickstats';
+import QuickStats from './home/quickstats';
 
 const GitHubHeatmap = () => {
   const { user, getToken } = useAuth();

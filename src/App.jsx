@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom"
 import Navbar from "./components/navbar.jsx"
-import Homepage from "./components/homepage.jsx"
+import Homepage from "./components/home/homepage.jsx"
 import LoginForm from "./components/login-form.jsx"
 import ExplorePage from "./components/explore/ExplorePage.jsx"
 import { KanbanPage } from "./components/kanban"

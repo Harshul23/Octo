@@ -13,18 +13,15 @@ import {
 import Sidebar from '../sidebar';
 import KanbanBoard from './KanbanBoard';
 import KanbanFilters from './KanbanFilters';
-import { KanbanProvider, useKanban, CARD_TYPES } from '../../context/KanbanContext';
+import { KanbanProvider, useKanban } from '../../context/KanbanContext';
+import { CARD_TYPES } from '../../lib/constants';
 import { useAuth } from '../../context/AuthContext';
 
 function KanbanPageContent() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { 
     cards, 
-    columns, 
     syncWithGitHub, 
-    syncStatus, 
-    loading,
-    settings,
   } = useKanban();
 
   const [filters, setFilters] = useState({
@@ -39,7 +36,7 @@ function KanbanPageContent() {
     if (isAuthenticated && cards.length === 0) {
       syncWithGitHub();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, cards.length, syncWithGitHub]);
 
   // Calculate stats
   const stats = {

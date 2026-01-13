@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Flame, ChevronLeft, ChevronRight, Trophy, Zap, Loader2 } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '.././ui/button.jsx';
 import { WiRefresh } from "react-icons/wi";
-import { useAuth } from '../context/AuthContext';
-import { fetchContributionData } from '../services/githubApi';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { fetchContributionData } from '../../services/githubApi';
 
 const StreakCalendar = () => {
   const { user } = useAuth();
@@ -176,41 +176,45 @@ const StreakCalendar = () => {
   }
 
   return (
-    <div className='w-full bg-[#1a1a1e] border border-white/5 rounded-3xl p-6 shadow-2xl font-sans'>
+    <div className='w-full bg-[#1a1a1e] border border-white/5 rounded-3xl px-4 py-2 shadow-2xl font-sans'>
       
       {/* Header: Streak Stats */}
-      <div className='flex justify-between items-end mb-6 gap-5 w-full'>
-        <div>
-          <div className='flex items-center justify-between w-full gap-0 mb-1'>
+      <div className='flex justify-between items-end mb-2 gap-5 w-full'>
+        <div className='w-full'>
+          <div className='flex items-center justify-between w-full gap-3 mb-1'>
+            <div className='flex items-center gap-3'>
             <span className={`flex h-2 w-2 rounded-full ${streakData.currentStreak > 0 ? 'bg-orange-500 animate-pulse' : 'bg-stone-600'}`}></span>
             <span className='text-[10px] font-black text-stone-500 uppercase tracking-widest'>Current Streak</span>
-            {/* Reset to Current Month Button */}
-      <div className=" top-24 right-10">
+            </div>
+      <div className="flex items-center justify-end">
         <Button
           onClick={resetToCurrentMonth}
           variant="ghost"
           size="sm"
-          className="text-xs text-gray-400 z-10 mt-2 rounded-2xl hover:text-white hover:bg-transparent"
+          className="text-xs text-gray-400 z-10 rounded-2xl hover:text-white hover:bg-transparent"
           title="Reset to current month"
         >
-          <WiRefresh className="size-7" />
+        <WiRefresh className="size-7" />
           Today
         </Button>
       </div>
-          </div>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-5xl font-black text-white leading-none'>{streakData.currentStreak}</h1>
+        </div>
+          <div className='flex w-full justify-between items-center gap-3'>
+            <div className='flex items-center gap-4'>
+               <h1 className='text-5xl font-black text-white leading-none'>{streakData.currentStreak}</h1>
             <div className='flex flex-col'>
               <span className='text-xl font-bold text-orange-500 leading-none'>DAYS</span>
               <span className='text-[10px] font-medium text-stone-500'>
                 {streakData.currentStreak > 0 ? 'Keep the fire burning!' : 'Start contributing!'}
               </span>
             </div>
-          </div>
-        </div>
-        <div className='p-3 bg-gradient-to-br from-orange-500/20 to-transparent rounded-2xl border border-orange-500/20'>
+            </div>
+            <div className='p-3 bg-gradient-to-br from-orange-500/20 to-transparent rounded-2xl border border-orange-500/20'>
           <Flame className='text-orange-500 fill-orange-500' size={24} />
         </div>
+          </div>
+        </div>
+      
       </div>
 
       {/* Calendar Navigation */}
@@ -223,7 +227,7 @@ const StreakCalendar = () => {
       </div>
 
       {/* The Grid */}
-      <div className='grid grid-cols-7 gap-y-2 mb-6'>
+      <div className='grid grid-cols-7 gap-y-2 mb-2'>
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
           <div key={d} className='text-center text-[10px] font-black text-stone-600 mb-2'>{d}</div>
         ))}
@@ -247,8 +251,8 @@ const StreakCalendar = () => {
               {active && (
                 <div 
                   className={`absolute inset-0 bg-white/10 z-0
-                    ${isStart ? 'rounded-l-lg' : ''} 
-                    ${isEnd ? 'rounded-r-lg' : ''}
+                    ${isStart ? 'rounded-l-lg left-2' : ''} 
+                    ${isEnd ? 'rounded-r-lg right-2' : ''}
                   `}
                 />
               )}
@@ -259,7 +263,7 @@ const StreakCalendar = () => {
                   ${today 
                     ? 'bg-white text-black' 
                     : contribCount > 0
-                      ? `${getIntensityColor(intensityLevel)} text-white` 
+                      ? `${getIntensityColor(intensityLevel)} text-white z-10` 
                       : 'text-stone-500 hover:bg-white/5'
                   }`}
                 title={`${contribCount} contribution${contribCount !== 1 ? 's' : ''}`}

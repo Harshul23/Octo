@@ -16,7 +16,8 @@ import {
   MessageSquare,
   User,
 } from 'lucide-react';
-import { CARD_TYPES, useKanban } from '../../context/KanbanContext';
+import { useKanban } from '../../context/KanbanContext';
+import { CARD_TYPES } from '../../lib/constants';
 import { formatDistanceToNow } from 'date-fns';
 
 const priorityColors = {

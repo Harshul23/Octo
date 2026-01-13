@@ -46,10 +46,10 @@ const RecommendedRepos = () => {
   ];
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 h-full w-full flex flex-col">
       {/* Section Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center overflow-auto justify-between mb-4">
+        <div className="flex items-center overflow-auto gap-2">
           <Zap className="size-5 text-yellow-400" />
           <h2 className="text-xl font-bold text-white">Recommended for You</h2>
           <span className="px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400 text-xs font-medium">
@@ -61,18 +61,18 @@ const RecommendedRepos = () => {
         </button>
       </div>
 
-      {/* Horizontal Scroll Container */}
-      <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+      {/* Vertical List Container with Scroll */}
+      <div className="flex flex-col gap-4 w-full flex-1 overflow-y-auto pr-2 pb-4">
         {recommendations.map((repo) => (
           <div
             key={repo.id}
-            className="min-w-[320px] p-5 rounded-2xl bg-[#161616] border border-white/5 hover:border-white/10 transition-all duration-300 group"
+            className="w-full p-5 rounded-2xl bg-[#161616] border border-white/5 hover:border-white/10 transition-all duration-300 group flex-shrink-0"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
                 <div className="size-10 rounded-xl bg-gradient-to-br from-neutral-700 to-neutral-800 flex items-center justify-center text-lg font-bold text-white">
-                  {repo.name. charAt(0).toUpperCase()}
+                  {repo.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <h3 className="font-semibold text-white group-hover:text-yellow-400 transition-colors">
@@ -82,7 +82,7 @@ const RecommendedRepos = () => {
                     <div className="flex items-center gap-1">
                       <div 
                         className="size-2 rounded-full" 
-                        style={{ backgroundColor:  repo.languageColor }}
+                        style={{ backgroundColor: repo.languageColor }}
                       />
                       <span>{repo.language}</span>
                     </div>
@@ -134,7 +134,7 @@ const RecommendedRepos = () => {
                 <span className="text-neutral-500">Match Score</span>
                 <span className="text-yellow-400 font-medium">{repo.matchScore}%</span>
               </div>
-              <div className="h-1. 5 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all"
                   style={{ width: `${repo.matchScore}%` }}

@@ -9,7 +9,8 @@ import {
   Tag,
   Flag,
 } from 'lucide-react';
-import { CARD_TYPES, useKanban } from '../../context/KanbanContext';
+import { useKanban } from '../../context/KanbanContext';
+import { CARD_TYPES } from '../../lib/constants';
 
 const cardTypes = [
   { type: CARD_TYPES.NOTE, icon: FileText, label: 'Note', description: 'A quick note or task' },

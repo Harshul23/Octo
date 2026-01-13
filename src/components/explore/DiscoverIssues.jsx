@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Compass, RefreshCw, Filter } from 'lucide-react';
 import IssueCard from './IssueCard';
 
-const DiscoverIssues = ({ filters, searchQuery }) => {
-  const [issues, setIssues] = useState([
+const DiscoverIssues = () => {
+  const [issues] = useState([
     {
       id: 1,
       title: "Add dark mode toggle to settings page",

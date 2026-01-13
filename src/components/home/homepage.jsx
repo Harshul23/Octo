@@ -1,4 +1,4 @@
-import Sidebar from "./sidebar.jsx"
+import Sidebar from "../sidebar.jsx"
 import Main from "./main.jsx"
 
 const Homepage = () => {

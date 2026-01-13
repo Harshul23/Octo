@@ -1,8 +1,5 @@
 import React from 'react'
-import { BsArrowUpRightCircleFill } from "react-icons/bs";
-import UpcomingEvents from './events.jsx';
-import MainMissionContainer from './octo-update.jsx';
-import GitHubHeatmap from './github-heatmap.jsx';
+import MainMissionContainer from './mission.jsx';
 import { useAuth } from '@/context/AuthContext';
 
 const Middle = () => {

@@ -9,7 +9,8 @@ import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { WiRefresh } from "react-icons/wi";
 
 import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/lib/button-variants"
 
 function Calendar({
   className,

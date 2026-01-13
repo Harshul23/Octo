@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -11,28 +12,34 @@ export const AuthProvider = ({ children }) => {
   const CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI || 'http://localhost:5173/callback';
 
-  // Check if user is already logged in (token in localStorage)
-  useEffect(() => {
-    const token = localStorage.getItem('github_token');
-    if (token) {
-      fetchUserData(token);
-    } else {
+  // Fetch GitHub user data
+  const fetchUserData = useCallback(async (token) => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://api.github.com/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+
+      const userData = await response.json();
+      setUser(userData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching user data:', err);
+      setError(err.message);
+      localStorage.removeItem('github_token');
       setLoading(false);
     }
   }, []);
 
-  // Handle GitHub OAuth callback
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    
-    if (code && !localStorage.getItem('github_token')) {
-      exchangeCodeForToken(code);
-    }
-  }, []);
-
   // Exchange authorization code for access token
-  const exchangeCodeForToken = async (code) => {
+  const exchangeCodeForToken = useCallback(async (code) => {
     try {
       setLoading(true);
       setError(null);
@@ -64,33 +71,27 @@ export const AuthProvider = ({ children }) => {
       setError(err.message);
       setLoading(false);
     }
-  };
+  }, [fetchUserData]);
 
-  // Fetch GitHub user data
-  const fetchUserData = async (token) => {
-    try {
-      setLoading(true);
-      const response = await fetch('https://api.github.com/user', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-
-      const userData = await response.json();
-      setUser(userData);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching user data:', err);
-      setError(err.message);
-      localStorage.removeItem('github_token');
+  // Check if user is already logged in (token in localStorage)
+  useEffect(() => {
+    const token = localStorage.getItem('github_token');
+    if (token) {
+      fetchUserData(token);
+    } else {
       setLoading(false);
     }
-  };
+  }, [fetchUserData]);
+
+  // Handle GitHub OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    
+    if (code && !localStorage.getItem('github_token')) {
+      exchangeCodeForToken(code);
+    }
+  }, [exchangeCodeForToken]);
 
   // Initiate GitHub OAuth login
   const loginWithGitHub = () => {
