@@ -4,6 +4,7 @@ import Homepage from "./components/home/homepage.jsx"
 import LoginForm from "./components/login-form.jsx"
 import ExplorePage from "./components/explore/ExplorePage.jsx"
 import { KanbanPage } from "./components/kanban"
+import { AchievementsPage } from "./components/achievements"
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx"
 
 const AppContent = () => {
@@ -34,6 +35,7 @@ const AppContent = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/dashboard" element={<KanbanPage />} />
+        <Route path="/achievements" element={<AchievementsPage />} />
       </Routes>
     </div>
   );
