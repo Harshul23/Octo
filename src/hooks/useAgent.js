@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 const AGENT_BASE_URL =
-  import.meta.env.VITE_AGENT_URL || "http://localhost:5000";
+  import.meta.env.VITE_AGENT_URL || "https://octo-alpha.vercel.app/";
 
 /**
  * Hook for interacting with the Octo AI Agent
