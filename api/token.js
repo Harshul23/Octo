@@ -18,8 +18,8 @@ export default async function handler(req, res) {
         Accept: 'application/json',
       },
       body: JSON.stringify({
-        client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-        client_secret: import.meta.env.VITE_GITHUB_CLIENT_SECRET,
+        client_id: process.meta.env.VITE_GITHUB_CLIENT_ID,
+        client_secret: process.meta.env.VITE_GITHUB_CLIENT_SECRET,
         code,
       }),
     });
