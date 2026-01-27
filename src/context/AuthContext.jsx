@@ -15,9 +15,9 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // GitHub OAuth configuration
-  const CLIENT_ID = import.meta.env.GITHUB_CLIENT_ID;
+  const CLIENT_ID = process.meta.env.GITHUB_CLIENT_ID;
   const REDIRECT_URI =
-    import.meta.env.GITHUB_REDIRECT_URI ||
+    process.meta.env.GITHUB_REDIRECT_URI ||
     "http://localhost:5173/callback";
 
   // Fetch GitHub user data
