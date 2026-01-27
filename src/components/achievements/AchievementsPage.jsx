@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { 
-  Trophy, 
-  Flame, 
-  Star, 
-  Target, 
-  TrendingUp, 
+import { useState, useEffect } from "react";
+import {
+  Trophy,
+  Flame,
+  Star,
+  Target,
+  TrendingUp,
   ChevronRight,
   Check,
   Lock,
@@ -12,17 +12,17 @@ import {
   GitPullRequest,
   Bug,
   Loader2,
-  RefreshCw
-} from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import Sidebar from '../sidebar';
-import { useAuth } from '../../context/AuthContext';
-import { 
-  fetchContributionData, 
-  fetchUserEvents, 
+  RefreshCw,
+} from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import Sidebar from "../sidebar";
+import { useAuth } from "../../context/AuthContext";
+import {
+  fetchContributionData,
+  fetchUserEvents,
   fetchUserRepositories,
-  parseUserActivity 
-} from '../../services/githubApi';
+  parseUserActivity,
+} from "../../services/githubApi";
 import {
   ACHIEVEMENTS,
   CATEGORIES,
@@ -31,14 +31,14 @@ import {
   calculateLevel,
   getAchievementsWithProgress,
   getRecentlyUnlocked,
-  getNextToUnlock
-} from './achievementData';
+  getNextToUnlock,
+} from "./achievementData";
 
 const AchievementsPage = () => {
   const { user, getToken } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState("all");
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
     prsMerged: 0,
@@ -46,33 +46,41 @@ const AchievementsPage = () => {
     totalContributions: 0,
     currentStreak: 0,
     comments: 0,
-    reposCreated: 0
+    reposCreated: 0,
   });
   const [achievements, setAchievements] = useState([]);
-  const [levelInfo, setLevelInfo] = useState({ level: 1, currentXP: 0, progressToNextLevel: 0 });
+  const [levelInfo, setLevelInfo] = useState({
+    level: 1,
+    currentXP: 0,
+    progressToNextLevel: 0,
+  });
 
   const fetchStats = async () => {
     const token = getToken();
     if (!user || !token) {
-      setError('Please log in to view your achievements');
+      setError("Please log in to view your achievements");
       return;
     }
 
     try {
       setError(null);
       const toDate = new Date().toISOString();
-      const fromDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+      const fromDate = new Date(
+        Date.now() - 365 * 24 * 60 * 60 * 1000,
+      ).toISOString();
 
       const [contributionData, events, repos] = await Promise.all([
         fetchContributionData(user.login, token, fromDate, toDate),
         fetchUserEvents(user.login, token, 100),
-        fetchUserRepositories(user.login, token, 100)
+        fetchUserRepositories(user.login, token, 100),
       ]);
 
       const activity = parseUserActivity(events);
-      const allDays = contributionData.calendar.weeks.flatMap(w => w.contributionDays);
+      const allDays = contributionData.calendar.weeks.flatMap(
+        (w) => w.contributionDays,
+      );
       const currentStreak = calculateStreak(allDays);
-      const ownedRepos = repos.filter(r => !r.fork).length;
+      const ownedRepos = repos.filter((r) => !r.fork).length;
 
       const newStats = {
         prsMerged: contributionData.stats.prsMerged,
@@ -80,7 +88,7 @@ const AchievementsPage = () => {
         totalContributions: contributionData.stats.totalContributions,
         currentStreak,
         comments: activity.comments.length,
-        reposCreated: ownedRepos
+        reposCreated: ownedRepos,
       };
 
       setStats(newStats);
@@ -89,10 +97,9 @@ const AchievementsPage = () => {
       const totalXP = calculateTotalXP(ACHIEVEMENTS, newStats);
       const level = calculateLevel(totalXP);
       setLevelInfo(level);
-
     } catch (err) {
-      console.error('Error fetching achievement stats:', err);
-      setError('Failed to fetch GitHub data. Please try again.');
+      console.error("Error fetching achievement stats:", err);
+      setError("Failed to fetch GitHub data. Please try again.");
     }
   };
 
@@ -111,19 +118,20 @@ const AchievementsPage = () => {
     setRefreshing(false);
   };
 
-  const unlockedCount = achievements.filter(a => a.unlocked).length;
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
   const totalCount = achievements.length;
-  
+
   // Donut chart data
   const donutData = [
-    { name: 'Unlocked', value: unlockedCount, color: '#a855f7' },
-    { name: 'Locked', value: totalCount - unlockedCount, color: '#f0e6d3' },
+    { name: "Unlocked", value: unlockedCount, color: "#a855f7" },
+    { name: "Locked", value: totalCount - unlockedCount, color: "#f0e6d3" },
   ];
 
   // Filter achievements
-  const filteredAchievements = activeFilter === 'all'
-    ? achievements
-    : achievements.filter(a => a.category === activeFilter);
+  const filteredAchievements =
+    activeFilter === "all"
+      ? achievements
+      : achievements.filter((a) => a.category === activeFilter);
 
   const sortedAchievements = [...filteredAchievements].sort((a, b) => {
     if (a.unlocked && !b.unlocked) return -1;
@@ -135,8 +143,11 @@ const AchievementsPage = () => {
   const recentUnlocks = getRecentlyUnlocked(achievements);
 
   const filters = [
-    { id: 'all', name: 'All' },
-    ...Object.values(CATEGORIES).map(c => ({ id: c.id, name: c.name.split(' ')[0] }))
+    { id: "all", name: "All" },
+    ...Object.values(CATEGORIES).map((c) => ({
+      id: c.id,
+      name: c.name.split(" ")[0],
+    })),
   ];
 
   if (loading) {
@@ -178,7 +189,7 @@ const AchievementsPage = () => {
   return (
     <div className="h-9/10 w-full flex gap-6 px-5">
       <Sidebar />
-      
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col gap-5 mt-8 overflow-hidden">
         {/* Header */}
@@ -190,14 +201,16 @@ const AchievementsPage = () => {
               <ChevronRight size={14} />
               <span className="text-white">Achievements</span>
             </div>
-            <h1 className="text-2xl font-bold text-white">Your Achievement Progress</h1>
+            <h1 className="text-2xl font-bold text-white">
+              Your Achievement Progress
+            </h1>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1a1a1a] border border-white/10 text-gray-400 hover:text-white transition-all disabled:opacity-50"
           >
-            <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
           </button>
         </div>
 
@@ -232,7 +245,9 @@ const AchievementsPage = () => {
               </ResponsiveContainer>
               {/* Center text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-black text-white">{unlockedCount}</span>
+                <span className="text-4xl font-black text-white">
+                  {unlockedCount}
+                </span>
                 <span className="text-xs text-gray-400">of {totalCount}</span>
               </div>
             </div>
@@ -247,13 +262,17 @@ const AchievementsPage = () => {
                 <span className="text-sm text-amber-200/80">Badges earned</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">{unlockedCount}</span>
+                <span className="text-3xl font-bold text-white">
+                  {unlockedCount}
+                </span>
                 <span className="text-emerald-400 text-sm flex items-center gap-0.5 mb-1">
-                  <TrendingUp size={14} />
-                  +{Math.round((unlockedCount / totalCount) * 100)}%
+                  <TrendingUp size={14} />+
+                  {Math.round((unlockedCount / totalCount) * 100)}%
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Total achievements unlocked</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Total achievements unlocked
+              </p>
             </div>
 
             {/* Total XP - Pink */}
@@ -263,9 +282,13 @@ const AchievementsPage = () => {
                 <span className="text-sm text-pink-200/80">Total XP</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">{levelInfo.currentXP.toLocaleString()}</span>
+                <span className="text-3xl font-bold text-white">
+                  {levelInfo.currentXP.toLocaleString()}
+                </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Experience points earned</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Experience points earned
+              </p>
             </div>
 
             {/* Current Level - White/Neutral */}
@@ -275,25 +298,36 @@ const AchievementsPage = () => {
                 <span className="text-sm text-gray-400">Current level</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">Lvl {levelInfo.level}</span>
+                <span className="text-3xl font-bold text-white">
+                  Lvl {levelInfo.level}
+                </span>
                 <span className="text-gray-500 text-sm mb-1">
                   {Math.round(levelInfo.progressToNextLevel)}%
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">{levelInfo.xpRequiredForNextLevel - levelInfo.xpInCurrentLevel} XP to next level</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {levelInfo.xpRequiredForNextLevel - levelInfo.xpInCurrentLevel}{" "}
+                XP to next level
+              </p>
             </div>
 
             {/* Current Streak */}
             <div className="p-5 rounded-2xl bg-gradient-to-br from-orange-400/20 to-red-400/10 border border-orange-400/20">
               <div className="flex items-center gap-2 mb-3">
                 <Flame size={16} className="text-orange-400" />
-                <span className="text-sm text-orange-200/80">Current streak</span>
+                <span className="text-sm text-orange-200/80">
+                  Current streak
+                </span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">{stats.currentStreak}</span>
+                <span className="text-3xl font-bold text-white">
+                  {stats.currentStreak}
+                </span>
                 <span className="text-sm text-gray-400 mb-1">days</span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Keep the momentum going!</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Keep the momentum going!
+              </p>
             </div>
 
             {/* PRs Merged */}
@@ -303,7 +337,9 @@ const AchievementsPage = () => {
                 <span className="text-sm text-blue-200/80">PRs merged</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">{stats.prsMerged}</span>
+                <span className="text-3xl font-bold text-white">
+                  {stats.prsMerged}
+                </span>
               </div>
               <p className="text-xs text-gray-500 mt-1">This year</p>
             </div>
@@ -312,10 +348,14 @@ const AchievementsPage = () => {
             <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-400/20 to-green-400/10 border border-emerald-400/20">
               <div className="flex items-center gap-2 mb-3">
                 <Bug size={16} className="text-emerald-400" />
-                <span className="text-sm text-emerald-200/80">Issues closed</span>
+                <span className="text-sm text-emerald-200/80">
+                  Issues closed
+                </span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">{stats.issuesClosed}</span>
+                <span className="text-3xl font-bold text-white">
+                  {stats.issuesClosed}
+                </span>
               </div>
               <p className="text-xs text-gray-500 mt-1">This year</p>
             </div>
@@ -326,38 +366,48 @@ const AchievementsPage = () => {
         <div className="flex gap-5 shrink-0">
           {/* Almost There */}
           <div className="flex-1">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">Almost there</h3>
+            <h3 className="text-sm font-medium text-gray-400 mb-3">
+              Almost there
+            </h3>
             <div className="flex gap-3">
-              {nearUnlocks.length > 0 ? nearUnlocks.slice(0, 3).map((achievement) => {
-                const Icon = achievement.icon;
-                return (
-                  <div
-                    key={achievement.id}
-                    className="flex-1 p-4 rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-purple-500/30 transition-all group"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
-                        <Icon size={18} className="text-purple-400" />
+              {nearUnlocks.length > 0 ? (
+                nearUnlocks.slice(0, 3).map((achievement) => {
+                  const Icon = achievement.icon;
+                  return (
+                    <div
+                      key={achievement.id}
+                      className="flex-1 p-4 rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-purple-500/30 transition-all group"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
+                          <Icon size={18} className="text-purple-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">
+                            {achievement.name}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {achievement.description}
+                          </p>
+                        </div>
+                        <span className="text-xs font-medium text-purple-400 bg-purple-500/10 px-2 py-1 rounded-lg">
+                          {Math.round(achievement.progress)}%
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">{achievement.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{achievement.description}</p>
+                      <div className="mt-3 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                          style={{ width: `${achievement.progress}%` }}
+                        />
                       </div>
-                      <span className="text-xs font-medium text-purple-400 bg-purple-500/10 px-2 py-1 rounded-lg">
-                        {Math.round(achievement.progress)}%
-                      </span>
                     </div>
-                    <div className="mt-3 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
-                        style={{ width: `${achievement.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              }) : (
+                  );
+                })
+              ) : (
                 <div className="flex-1 p-4 rounded-2xl bg-[#1a1a1a] border border-white/5 text-center text-gray-500">
-                  <p className="text-sm">Start contributing to unlock achievements!</p>
+                  <p className="text-sm">
+                    Start contributing to unlock achievements!
+                  </p>
                 </div>
               )}
             </div>
@@ -366,23 +416,33 @@ const AchievementsPage = () => {
 
         {/* Recent Unlocks */}
         <div className="shrink-0">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">Recent unlocks</h3>
+          <h3 className="text-sm font-medium text-gray-400 mb-3">
+            Recent unlocks
+          </h3>
           <div className="flex gap-3">
-            {recentUnlocks.length > 0 ? recentUnlocks.map((achievement) => (
-              <div
-                key={achievement.id}
-                className="p-3 rounded-xl bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 flex items-center gap-3"
-              >
-                <div className={`p-2 rounded-lg bg-gradient-to-br ${achievement.rarity.color}`}>
-                  <achievement.icon size={14} className="text-white" />
+            {recentUnlocks.length > 0 ? (
+              recentUnlocks.map((achievement) => (
+                <div
+                  key={achievement.id}
+                  className="p-3 rounded-xl bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 flex items-center gap-3"
+                >
+                  <div
+                    className={`p-2 rounded-lg bg-gradient-to-br ${achievement.rarity.color}`}
+                  >
+                    <achievement.icon size={14} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-white">
+                      {achievement.name}
+                    </p>
+                    <p className="text-xs text-yellow-400">
+                      +{achievement.xp} XP
+                    </p>
+                  </div>
+                  <span className="text-lg ml-1">{achievement.emoji}</span>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-white">{achievement.name}</p>
-                  <p className="text-xs text-yellow-400">+{achievement.xp} XP</p>
-                </div>
-                <span className="text-lg ml-1">{achievement.emoji}</span>
-              </div>
-            )) : (
+              ))
+            ) : (
               <div className="p-3 rounded-xl bg-[#1a1a1a] border border-white/5 text-gray-500 text-sm">
                 No recent unlocks yet
               </div>
@@ -400,8 +460,8 @@ const AchievementsPage = () => {
                 onClick={() => setActiveFilter(filter.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   activeFilter === filter.id
-                    ? 'bg-white text-black'
-                    : 'bg-[#1a1a1a] text-gray-400 hover:text-white border border-white/5'
+                    ? "bg-white text-black"
+                    : "bg-[#1a1a1a] text-gray-400 hover:text-white border border-white/5"
                 }`}
               >
                 {filter.name}
@@ -433,27 +493,44 @@ const AchievementsPage = () => {
                   >
                     {/* Rarity */}
                     <div className="col-span-1">
-                      <span className={`text-xs font-medium px-2 py-1 rounded-lg ${achievement.rarity.bg} ${achievement.rarity.text}`}>
+                      <span
+                        className={`text-xs font-medium px-2 py-1 rounded-lg ${achievement.rarity.bg} ${achievement.rarity.text}`}
+                      >
                         {achievement.rarity.name.slice(0, 4)}
                       </span>
                     </div>
 
                     {/* Achievement Name + Icon */}
                     <div className="col-span-3 flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${achievement.unlocked ? `bg-gradient-to-br ${achievement.rarity.color}` : 'bg-white/5'}`}>
-                        <Icon size={16} className={achievement.unlocked ? 'text-white' : 'text-gray-600'} />
+                      <div
+                        className={`p-2 rounded-lg ${achievement.unlocked ? `bg-gradient-to-br ${achievement.rarity.color}` : "bg-white/5"}`}
+                      >
+                        <Icon
+                          size={16}
+                          className={
+                            achievement.unlocked
+                              ? "text-white"
+                              : "text-gray-600"
+                          }
+                        />
                       </div>
-                      <span className={`font-medium ${achievement.unlocked ? 'text-white' : 'text-gray-500'}`}>
+                      <span
+                        className={`font-medium ${achievement.unlocked ? "text-white" : "text-gray-500"}`}
+                      >
                         {achievement.name}
                       </span>
-                      <span className={`text-lg ${achievement.unlocked ? '' : 'grayscale opacity-40'}`}>
+                      <span
+                        className={`text-lg ${achievement.unlocked ? "" : "grayscale opacity-40"}`}
+                      >
                         {achievement.emoji}
                       </span>
                     </div>
 
                     {/* Description */}
                     <div className="col-span-3">
-                      <span className="text-sm text-gray-500">{achievement.description}</span>
+                      <span className="text-sm text-gray-500">
+                        {achievement.description}
+                      </span>
                     </div>
 
                     {/* Progress */}
@@ -462,9 +539,9 @@ const AchievementsPage = () => {
                         <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${
-                              achievement.unlocked 
-                                ? `bg-gradient-to-r ${achievement.rarity.color}` 
-                                : 'bg-gray-600'
+                              achievement.unlocked
+                                ? `bg-gradient-to-r ${achievement.rarity.color}`
+                                : "bg-gray-600"
                             }`}
                             style={{ width: `${achievement.progress}%` }}
                           />
@@ -477,7 +554,9 @@ const AchievementsPage = () => {
 
                     {/* XP */}
                     <div className="col-span-1">
-                      <span className={`text-sm font-medium ${achievement.unlocked ? 'text-yellow-400' : 'text-gray-600'}`}>
+                      <span
+                        className={`text-sm font-medium ${achievement.unlocked ? "text-yellow-400" : "text-gray-600"}`}
+                      >
                         +{achievement.xp}
                       </span>
                     </div>
