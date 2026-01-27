@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
   // Exchange authorization code for access token
   const exchangeCodeForToken = useCallback(
     async (code) => {
+      window.history.replaceState({}, document.title, window.location.pathname);
       try {
         setLoading(true);
         setError(null);
