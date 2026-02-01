@@ -9,10 +9,44 @@ import React, {
 
 const AuthContext = createContext(null);
 
+// Development-only mock user for testing without OAuth
+const DEV_MOCK_USER = {
+  id: 12345678,
+  login: "dev-user",
+  name: "Development User",
+  avatar_url: "https://avatars.githubusercontent.com/u/12345678?v=4",
+  html_url: "https://github.com/dev-user",
+  bio: "Mock user for local development",
+  public_repos: 10,
+  followers: 100,
+  following: 50,
+  created_at: "2020-01-01T00:00:00Z",
+};
+
+// Check if we're in dev mode AND dev bypass is enabled
+const isDevBypass = () => {
+  const isDev = import.meta.env.DEV;
+  const isLocalhost =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+  const bypassEnabled = import.meta.env.VITE_DEV_AUTH_BYPASS === "true";
+
+  return isDev && isLocalhost && bypassEnabled;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Check for dev bypass on initial load
+  useEffect(() => {
+    if (isDevBypass()) {
+      console.log("🔓 DEV AUTH BYPASS ACTIVE - Using mock user");
+      setUser(DEV_MOCK_USER);
+      setLoading(false);
+    }
+  }, []);
 
   // GitHub OAuth configuration
   const CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -87,6 +121,9 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user is already logged in (token in localStorage)
   useEffect(() => {
+    // Skip if dev bypass is active
+    if (isDevBypass()) return;
+
     const token = localStorage.getItem("github_token");
     if (token) {
       fetchUserData(token);

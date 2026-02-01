@@ -166,7 +166,7 @@ const AchievementsPage = () => {
 
   if (error) {
     return (
-      <div className="h-9/10 w-full flex gap-8 px-5">
+      <div className="h-full w-full flex gap-4 px-4 py-4 overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4 text-center">
@@ -187,44 +187,44 @@ const AchievementsPage = () => {
   }
 
   return (
-    <div className="h-9/10 w-full flex gap-6 px-5">
+    <div className="h-full w-full flex gap-4 px-4 py-4 overflow-hidden">
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col gap-5 mt-8 overflow-hidden">
+      <div className="flex-1 flex flex-col gap-4 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between shrink-0">
           <div>
-            <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-              <Trophy size={14} />
+            <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+              <Trophy size={12} />
               <span>Dashboard</span>
-              <ChevronRight size={14} />
+              <ChevronRight size={12} />
               <span className="text-white">Achievements</span>
             </div>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-xl font-bold text-white">
               Your Achievement Progress
             </h1>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1a1a1a] border border-white/10 text-gray-400 hover:text-white transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1a1a1a] border border-white/10 text-gray-400 hover:text-white transition-all disabled:opacity-50"
           >
-            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
+            <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
           </button>
         </div>
 
         {/* Top Section: Stats Cards + Donut Chart */}
-        <div className="flex gap-5 shrink-0">
+        <div className="flex gap-4 shrink-0">
           {/* Left: Donut Chart */}
-          <div className="w-[280px] p-6 rounded-3xl bg-gradient-to-br from-[#fef3c7]/10 to-[#fde68a]/5 border border-amber-200/10 relative">
-            <div className="absolute top-4 right-4 text-amber-400/60">
-              <Sparkles size={18} />
+          <div className="w-[220px] p-4 rounded-2xl bg-gradient-to-br from-[#fef3c7]/10 to-[#fde68a]/5 border border-amber-200/10 relative shrink-0">
+            <div className="absolute top-3 right-3 text-amber-400/60">
+              <Sparkles size={14} />
             </div>
-            <div className="absolute bottom-4 left-4 text-purple-400/60">
-              <Star size={16} />
+            <div className="absolute bottom-3 left-3 text-purple-400/60">
+              <Star size={12} />
             </div>
-            <div className="relative h-[180px]">
+            <div className="relative h-[140px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -245,156 +245,158 @@ const AchievementsPage = () => {
               </ResponsiveContainer>
               {/* Center text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-black text-white">
+                <span className="text-3xl font-black text-white">
                   {unlockedCount}
                 </span>
-                <span className="text-xs text-gray-400">of {totalCount}</span>
+                <span className="text-[10px] text-gray-400">
+                  of {totalCount}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Right: Stats Cards */}
-          <div className="flex-1 grid grid-cols-3 gap-4">
+          <div className="flex-1 grid grid-cols-3 gap-3">
             {/* Badges Earned - Yellow */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-400/20 to-yellow-400/10 border border-amber-400/20">
-              <div className="flex items-center gap-2 mb-3">
-                <Trophy size={16} className="text-amber-400" />
-                <span className="text-sm text-amber-200/80">Badges earned</span>
+            <div className="p-3 rounded-xl bg-gradient-to-br from-amber-400/20 to-yellow-400/10 border border-amber-400/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Trophy size={14} className="text-amber-400" />
+                <span className="text-xs text-amber-200/80">Badges earned</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-2xl font-bold text-white">
                   {unlockedCount}
                 </span>
-                <span className="text-emerald-400 text-sm flex items-center gap-0.5 mb-1">
-                  <TrendingUp size={14} />+
+                <span className="text-emerald-400 text-xs flex items-center gap-0.5 mb-0.5">
+                  <TrendingUp size={12} />+
                   {Math.round((unlockedCount / totalCount) * 100)}%
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] text-gray-500 mt-1">
                 Total achievements unlocked
               </p>
             </div>
 
             {/* Total XP - Pink */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-pink-400/20 to-rose-400/10 border border-pink-400/20">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles size={16} className="text-pink-400" />
-                <span className="text-sm text-pink-200/80">Total XP</span>
+            <div className="p-3 rounded-xl bg-gradient-to-br from-pink-400/20 to-rose-400/10 border border-pink-400/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={14} className="text-pink-400" />
+                <span className="text-xs text-pink-200/80">Total XP</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-2xl font-bold text-white">
                   {levelInfo.currentXP.toLocaleString()}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] text-gray-500 mt-1">
                 Experience points earned
               </p>
             </div>
 
             {/* Current Level - White/Neutral */}
-            <div className="p-5 rounded-2xl bg-[#1a1a1a] border border-white/10">
-              <div className="flex items-center gap-2 mb-3">
-                <Target size={16} className="text-purple-400" />
-                <span className="text-sm text-gray-400">Current level</span>
+            <div className="p-3 rounded-xl bg-[#1a1a1a] border border-white/10">
+              <div className="flex items-center gap-2 mb-2">
+                <Target size={14} className="text-purple-400" />
+                <span className="text-xs text-gray-400">Current level</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-2xl font-bold text-white">
                   Lvl {levelInfo.level}
                 </span>
-                <span className="text-gray-500 text-sm mb-1">
+                <span className="text-gray-500 text-xs mb-0.5">
                   {Math.round(levelInfo.progressToNextLevel)}%
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] text-gray-500 mt-1">
                 {levelInfo.xpRequiredForNextLevel - levelInfo.xpInCurrentLevel}{" "}
                 XP to next level
               </p>
             </div>
 
             {/* Current Streak */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-orange-400/20 to-red-400/10 border border-orange-400/20">
-              <div className="flex items-center gap-2 mb-3">
-                <Flame size={16} className="text-orange-400" />
-                <span className="text-sm text-orange-200/80">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-400/20 to-red-400/10 border border-orange-400/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Flame size={14} className="text-orange-400" />
+                <span className="text-xs text-orange-200/80">
                   Current streak
                 </span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-2xl font-bold text-white">
                   {stats.currentStreak}
                 </span>
-                <span className="text-sm text-gray-400 mb-1">days</span>
+                <span className="text-xs text-gray-400 mb-0.5">days</span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] text-gray-500 mt-1">
                 Keep the momentum going!
               </p>
             </div>
 
             {/* PRs Merged */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-400/20 to-cyan-400/10 border border-blue-400/20">
-              <div className="flex items-center gap-2 mb-3">
-                <GitPullRequest size={16} className="text-blue-400" />
-                <span className="text-sm text-blue-200/80">PRs merged</span>
+            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-400/20 to-cyan-400/10 border border-blue-400/20">
+              <div className="flex items-center gap-2 mb-2">
+                <GitPullRequest size={14} className="text-blue-400" />
+                <span className="text-xs text-blue-200/80">PRs merged</span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-2xl font-bold text-white">
                   {stats.prsMerged}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">This year</p>
+              <p className="text-[10px] text-gray-500 mt-1">This year</p>
             </div>
 
             {/* Issues Closed */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-400/20 to-green-400/10 border border-emerald-400/20">
-              <div className="flex items-center gap-2 mb-3">
-                <Bug size={16} className="text-emerald-400" />
-                <span className="text-sm text-emerald-200/80">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-400/20 to-green-400/10 border border-emerald-400/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Bug size={14} className="text-emerald-400" />
+                <span className="text-xs text-emerald-200/80">
                   Issues closed
                 </span>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-2xl font-bold text-white">
                   {stats.issuesClosed}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">This year</p>
+              <p className="text-[10px] text-gray-500 mt-1">This year</p>
             </div>
           </div>
         </div>
 
         {/* Middle Section: Near Unlocks + Recent Unlocks */}
-        <div className="flex gap-5 shrink-0">
+        <div className="flex gap-3 shrink-0">
           {/* Almost There */}
           <div className="flex-1">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">
+            <h3 className="text-xs font-medium text-gray-400 mb-2">
               Almost there
             </h3>
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {nearUnlocks.length > 0 ? (
                 nearUnlocks.slice(0, 3).map((achievement) => {
                   const Icon = achievement.icon;
                   return (
                     <div
                       key={achievement.id}
-                      className="flex-1 p-4 rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-purple-500/30 transition-all group"
+                      className="flex-1 p-3 rounded-xl bg-[#1a1a1a] border border-white/5 hover:border-purple-500/30 transition-all group"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 rounded-xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
-                          <Icon size={18} className="text-purple-400" />
+                      <div className="flex items-start gap-2">
+                        <div className="p-1.5 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
+                          <Icon size={14} className="text-purple-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white truncate">
+                          <p className="text-xs font-medium text-white truncate">
                             {achievement.name}
                           </p>
-                          <p className="text-xs text-gray-500 truncate">
+                          <p className="text-[10px] text-gray-500 truncate">
                             {achievement.description}
                           </p>
                         </div>
-                        <span className="text-xs font-medium text-purple-400 bg-purple-500/10 px-2 py-1 rounded-lg">
+                        <span className="text-[10px] font-medium text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">
                           {Math.round(achievement.progress)}%
                         </span>
                       </div>
-                      <div className="mt-3 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className="mt-2 h-1 bg-white/5 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
                           style={{ width: `${achievement.progress}%` }}
@@ -404,8 +406,8 @@ const AchievementsPage = () => {
                   );
                 })
               ) : (
-                <div className="flex-1 p-4 rounded-2xl bg-[#1a1a1a] border border-white/5 text-center text-gray-500">
-                  <p className="text-sm">
+                <div className="flex-1 p-3 rounded-xl bg-[#1a1a1a] border border-white/5 text-center text-gray-500">
+                  <p className="text-xs">
                     Start contributing to unlock achievements!
                   </p>
                 </div>
@@ -416,34 +418,34 @@ const AchievementsPage = () => {
 
         {/* Recent Unlocks */}
         <div className="shrink-0">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">
+          <h3 className="text-xs font-medium text-gray-400 mb-2">
             Recent unlocks
           </h3>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             {recentUnlocks.length > 0 ? (
               recentUnlocks.map((achievement) => (
                 <div
                   key={achievement.id}
-                  className="p-3 rounded-xl bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 flex items-center gap-3"
+                  className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border border-yellow-500/20 flex items-center gap-2"
                 >
                   <div
-                    className={`p-2 rounded-lg bg-gradient-to-br ${achievement.rarity.color}`}
+                    className={`p-1.5 rounded-lg bg-gradient-to-br ${achievement.rarity.color}`}
                   >
-                    <achievement.icon size={14} className="text-white" />
+                    <achievement.icon size={12} className="text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-xs font-medium text-white">
                       {achievement.name}
                     </p>
-                    <p className="text-xs text-yellow-400">
+                    <p className="text-[10px] text-yellow-400">
                       +{achievement.xp} XP
                     </p>
                   </div>
-                  <span className="text-lg ml-1">{achievement.emoji}</span>
+                  <span className="text-sm ml-1">{achievement.emoji}</span>
                 </div>
               ))
             ) : (
-              <div className="p-3 rounded-xl bg-[#1a1a1a] border border-white/5 text-gray-500 text-sm">
+              <div className="p-2 rounded-lg bg-[#1a1a1a] border border-white/5 text-gray-500 text-xs">
                 No recent unlocks yet
               </div>
             )}
@@ -451,14 +453,14 @@ const AchievementsPage = () => {
         </div>
 
         {/* Bottom Section: Achievement Table */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {/* Filters */}
-          <div className="flex gap-2 mb-4 shrink-0">
+          <div className="flex gap-1.5 mb-3 shrink-0 flex-wrap">
             {filters.map((filter) => (
               <button
                 key={filter.id}
                 onClick={() => setActiveFilter(filter.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   activeFilter === filter.id
                     ? "bg-white text-black"
                     : "bg-[#1a1a1a] text-gray-400 hover:text-white border border-white/5"
@@ -470,9 +472,9 @@ const AchievementsPage = () => {
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar rounded-2xl bg-[#0f0f0f] border border-white/5">
+          <div className="flex-1 overflow-y-auto custom-scrollbar rounded-xl bg-[#0f0f0f] border border-white/5">
             {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-5 py-3 border-b border-white/5 text-xs text-gray-500 font-medium sticky top-0 bg-[#0f0f0f] z-10">
+            <div className="grid grid-cols-12 gap-3 px-4 py-2 border-b border-white/5 text-[10px] text-gray-500 font-medium sticky top-0 bg-[#0f0f0f] z-10">
               <div className="col-span-1">Rarity</div>
               <div className="col-span-3">Achievement</div>
               <div className="col-span-3">Description</div>
@@ -488,25 +490,25 @@ const AchievementsPage = () => {
                 return (
                   <div
                     key={achievement.id}
-                    className="grid grid-cols-12 gap-4 px-5 py-4 items-center hover:bg-white/[0.02] transition-colors animate-fadeIn"
-                    style={{ animationDelay: `${index * 30}ms` }}
+                    className="grid grid-cols-12 gap-3 px-4 py-2.5 items-center hover:bg-white/[0.02] transition-colors animate-fadeIn"
+                    style={{ animationDelay: `${index * 20}ms` }}
                   >
                     {/* Rarity */}
                     <div className="col-span-1">
                       <span
-                        className={`text-xs font-medium px-2 py-1 rounded-lg ${achievement.rarity.bg} ${achievement.rarity.text}`}
+                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${achievement.rarity.bg} ${achievement.rarity.text}`}
                       >
                         {achievement.rarity.name.slice(0, 4)}
                       </span>
                     </div>
 
                     {/* Achievement Name + Icon */}
-                    <div className="col-span-3 flex items-center gap-3">
+                    <div className="col-span-3 flex items-center gap-2">
                       <div
-                        className={`p-2 rounded-lg ${achievement.unlocked ? `bg-gradient-to-br ${achievement.rarity.color}` : "bg-white/5"}`}
+                        className={`p-1.5 rounded-lg ${achievement.unlocked ? `bg-gradient-to-br ${achievement.rarity.color}` : "bg-white/5"}`}
                       >
                         <Icon
-                          size={16}
+                          size={12}
                           className={
                             achievement.unlocked
                               ? "text-white"
@@ -515,12 +517,12 @@ const AchievementsPage = () => {
                         />
                       </div>
                       <span
-                        className={`font-medium ${achievement.unlocked ? "text-white" : "text-gray-500"}`}
+                        className={`text-xs font-medium ${achievement.unlocked ? "text-white" : "text-gray-500"}`}
                       >
                         {achievement.name}
                       </span>
                       <span
-                        className={`text-lg ${achievement.unlocked ? "" : "grayscale opacity-40"}`}
+                        className={`text-sm ${achievement.unlocked ? "" : "grayscale opacity-40"}`}
                       >
                         {achievement.emoji}
                       </span>
@@ -528,15 +530,15 @@ const AchievementsPage = () => {
 
                     {/* Description */}
                     <div className="col-span-3">
-                      <span className="text-sm text-gray-500">
+                      <span className="text-[10px] text-gray-500">
                         {achievement.description}
                       </span>
                     </div>
 
                     {/* Progress */}
                     <div className="col-span-2">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${
                               achievement.unlocked
@@ -546,7 +548,7 @@ const AchievementsPage = () => {
                             style={{ width: `${achievement.progress}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-500 w-12">
+                        <span className="text-[10px] text-gray-500 w-10">
                           {achievement.current}/{achievement.required}
                         </span>
                       </div>
@@ -555,22 +557,22 @@ const AchievementsPage = () => {
                     {/* XP */}
                     <div className="col-span-1">
                       <span
-                        className={`text-sm font-medium ${achievement.unlocked ? "text-yellow-400" : "text-gray-600"}`}
+                        className={`text-xs font-medium ${achievement.unlocked ? "text-yellow-400" : "text-gray-600"}`}
                       >
                         +{achievement.xp}
                       </span>
                     </div>
 
                     {/* Status */}
-                    <div className="col-span-2 flex items-center gap-2">
+                    <div className="col-span-2 flex items-center">
                       {achievement.unlocked ? (
-                        <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full">
-                          <Check size={12} />
+                        <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg">
+                          <Check size={10} />
                           Unlocked
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-white/5 px-3 py-1.5 rounded-full">
-                          <Lock size={12} />
+                        <span className="flex items-center gap-1 text-[10px] font-medium text-gray-500 bg-white/5 px-2 py-1 rounded-lg">
+                          <Lock size={10} />
                           Locked
                         </span>
                       )}

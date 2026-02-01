@@ -1,57 +1,58 @@
-import React from 'react';
-import { Zap, Star, GitFork, ChevronRight, ExternalLink } from 'lucide-react';
+import React from "react";
+import { Zap, Star, GitFork, ChevronRight, ExternalLink } from "lucide-react";
 
 const RecommendedRepos = () => {
   // Sample data - will come from AI analysis of your PR history
   const recommendations = [
     {
       id: 1,
-      name:  'shadcn/ui',
-      description: 'Beautifully designed components built with Radix UI and Tailwind CSS.',
-      stars: '45. 2k',
-      forks: '2.8k',
-      language: 'TypeScript',
-      languageColor: '#3178c6',
+      name: "shadcn/ui",
+      description:
+        "Beautifully designed components built with Radix UI and Tailwind CSS.",
+      stars: "45. 2k",
+      forks: "2.8k",
+      language: "TypeScript",
+      languageColor: "#3178c6",
       matchReason: "You've worked on similar React + Tailwind projects",
       matchScore: 95,
       openIssues: 124,
-      goodFirstIssues: 8
+      goodFirstIssues: 8,
     },
     {
       id: 2,
-      name:  'vercel/next.js',
-      description: 'The React Framework for the Web',
-      stars: '118k',
-      forks: '25.4k',
-      language: 'JavaScript',
-      languageColor:  '#f1e05a',
+      name: "vercel/next.js",
+      description: "The React Framework for the Web",
+      stars: "118k",
+      forks: "25.4k",
+      language: "JavaScript",
+      languageColor: "#f1e05a",
       matchReason: "Based on your React experience from previous PRs",
       matchScore: 88,
       openIssues: 2341,
-      goodFirstIssues: 45
+      goodFirstIssues: 45,
     },
     {
       id: 3,
-      name: 'tailwindlabs/tailwindcss',
-      description:  'A utility-first CSS framework for rapid UI development.',
-      stars: '76.8k',
-      forks: '3.9k',
-      language: 'CSS',
-      languageColor:  '#563d7c',
+      name: "tailwindlabs/tailwindcss",
+      description: "A utility-first CSS framework for rapid UI development.",
+      stars: "76.8k",
+      forks: "3.9k",
+      language: "CSS",
+      languageColor: "#563d7c",
       matchReason: "You use Tailwind in most of your projects! ",
       matchScore: 92,
-      openIssues:  89,
-      goodFirstIssues: 12
-    }
+      openIssues: 89,
+      goodFirstIssues: 12,
+    },
   ];
 
   return (
-    <div className="mb-8 h-full w-full flex flex-col">
+    <div className="h-full w-full flex flex-col overflow-hidden">
       {/* Section Header */}
-      <div className="flex items-center overflow-auto justify-between mb-4">
-        <div className="flex items-center overflow-auto gap-2">
-          <Zap className="size-5 text-yellow-400" />
-          <h2 className="text-xl font-bold text-white">Recommended for You</h2>
+      <div className="flex items-center justify-between mb-3 shrink-0">
+        <div className="flex items-center gap-2">
+          <Zap className="size-4 text-yellow-400" />
+          <h2 className="text-lg font-bold text-white">Recommended for You</h2>
           <span className="px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400 text-xs font-medium">
             AI Powered
           </span>
@@ -62,11 +63,11 @@ const RecommendedRepos = () => {
       </div>
 
       {/* Vertical List Container with Scroll */}
-      <div className="flex flex-col gap-4 w-full flex-1 overflow-y-auto pr-2 pb-4">
+      <div className="flex flex-col gap-3 w-full flex-1 overflow-y-auto pr-1 custom-scrollbar">
         {recommendations.map((repo) => (
           <div
             key={repo.id}
-            className="w-full p-5 rounded-2xl bg-[#161616] border border-white/5 hover:border-white/10 transition-all duration-300 group flex-shrink-0"
+            className="w-full p-4 rounded-xl bg-[#161616] border border-white/5 hover:border-white/10 transition-all duration-300 group shrink-0"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
@@ -80,8 +81,8 @@ const RecommendedRepos = () => {
                   </h3>
                   <div className="flex items-center gap-2 text-xs text-neutral-500">
                     <div className="flex items-center gap-1">
-                      <div 
-                        className="size-2 rounded-full" 
+                      <div
+                        className="size-2 rounded-full"
                         style={{ backgroundColor: repo.languageColor }}
                       />
                       <span>{repo.language}</span>
@@ -89,7 +90,7 @@ const RecommendedRepos = () => {
                   </div>
                 </div>
               </div>
-              <a 
+              <a
                 href={`https://github.com/${repo.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -107,7 +108,8 @@ const RecommendedRepos = () => {
             {/* Match Reason - Student Friendly */}
             <div className="p-2 rounded-lg bg-yellow-400/10 border border-yellow-400/20 mb-3">
               <p className="text-xs text-yellow-400">
-                <span className="font-medium">🎯 Why this? </span> {repo.matchReason}
+                <span className="font-medium">🎯 Why this? </span>{" "}
+                {repo.matchReason}
               </p>
             </div>
 
@@ -132,10 +134,12 @@ const RecommendedRepos = () => {
             <div className="mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center justify-between text-xs mb-1">
                 <span className="text-neutral-500">Match Score</span>
-                <span className="text-yellow-400 font-medium">{repo.matchScore}%</span>
+                <span className="text-yellow-400 font-medium">
+                  {repo.matchScore}%
+                </span>
               </div>
               <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all"
                   style={{ width: `${repo.matchScore}%` }}
                 />

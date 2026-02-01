@@ -21,10 +21,10 @@ const Middle = () => {
   const userName = user?.name?.split(" ")[0] || user?.login || "User";
 
   return (
-    <div className="text-white h-full w-4/5 rounded-4xl flex justify-start items-start flex-col">
-      <div className="flex flex-col my-3">
-        <div className="flex items-center gap-3">
-          <h1 className="text-5xl font-black leading-normal">
+    <div className="text-white h-full w-3/5 flex flex-col overflow-hidden">
+      <div className="flex flex-col shrink-0 mb-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="text-3xl font-black leading-normal">
             {getGreeting()}, {userName}
           </h1>
           {/* Agent Status Indicator */}
@@ -57,8 +57,8 @@ const Middle = () => {
 
         {/* AI Summary Banner */}
         {summary && !loading && (
-          <div className="flex items-start gap-3 mt-2">
-            <p className="text-lg text-neutral-400">
+          <div className="flex items-start gap-2 mt-1">
+            <p className="text-sm text-neutral-400">
               {summary.summary ||
                 `${user?.public_repos || 0} public repositories are in your profile.`}
             </p>
@@ -66,7 +66,7 @@ const Middle = () => {
         )}
 
         {!summary && (
-          <p className="text-lg text-neutral-400">
+          <p className="text-sm text-neutral-400">
             Intelly wishes you a good and productive day.{" "}
             {user?.public_repos || 0} public repositories are in your profile.
           </p>
@@ -74,15 +74,15 @@ const Middle = () => {
 
         {/* Actionable Items Alert */}
         {actionableItems.length > 0 && (
-          <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-            <AlertCircle className="size-4 text-amber-500" />
-            <span className="text-amber-400 text-sm font-medium">
+          <div className="flex items-center gap-2 mt-2 px-2 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+            <AlertCircle className="size-3 text-amber-500" />
+            <span className="text-amber-400 text-xs font-medium">
               {actionableItems.length} item
-              {actionableItems.length > 1 ? "s" : ""} need your attention
+              {actionableItems.length > 1 ? "s" : ""} need attention
             </span>
             <button
               onClick={refresh}
-              className="ml-auto text-xs text-amber-500 hover:text-amber-400 underline"
+              className="ml-auto text-[10px] text-amber-500 hover:text-amber-400 underline"
             >
               Refresh
             </button>
@@ -101,7 +101,7 @@ const Middle = () => {
 
       {/* Activity Feed - Shows recent PR/Issue activity */}
       {activities.length > 0 && (
-        <ActivityFeed activities={activities.slice(0, 5)} loading={loading} />
+        <ActivityFeed activities={activities.slice(0, 3)} loading={loading} />
       )}
     </div>
   );

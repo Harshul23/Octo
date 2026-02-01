@@ -1,11 +1,11 @@
-import { Routes, Route } from "react-router-dom"
-import Navbar from "./components/navbar.jsx"
-import Homepage from "./components/home/homepage.jsx"
-import LoginForm from "./components/login-form.jsx"
-import ExplorePage from "./components/explore/ExplorePage.jsx"
-import { KanbanPage } from "./components/kanban"
-import { AchievementsPage } from "./components/achievements"
-import { AuthProvider, useAuth } from "./context/AuthContext.jsx"
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/navbar.jsx";
+import Homepage from "./components/home/homepage.jsx";
+import LoginForm from "./components/login-form.jsx";
+import ExplorePage from "./components/explore/ExplorePage.jsx";
+import { KanbanPage } from "./components/kanban";
+import { AchievementsPage } from "./components/achievements";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
 const AppContent = () => {
   const { user, loading } = useAuth();
@@ -29,14 +29,16 @@ const AppContent = () => {
   }
 
   return (
-    <div className="box-border bg-[#0a0a0a] h-screen w-full">
+    <div className="box-border bg-[#0a0a0a] h-screen w-full flex flex-col overflow-hidden">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/dashboard" element={<KanbanPage />} />
-        <Route path="/achievements" element={<AchievementsPage />} />
-      </Routes>
+      <div className="flex-1 overflow-hidden">
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/dashboard" element={<KanbanPage />} />
+          <Route path="/achievements" element={<AchievementsPage />} />
+        </Routes>
+      </div>
     </div>
   );
 };
@@ -49,4 +51,4 @@ const App = () => {
   );
 };
 
-export default App
+export default App;

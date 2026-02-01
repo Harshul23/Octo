@@ -1,15 +1,13 @@
-import Middle from './middle.jsx'
-import RightSidebar from './rightsidebar.jsx'
+import Middle from "./middle.jsx";
+import RightSidebar from "./rightsidebar.jsx";
 
 const Main = () => {
   return (
-    <>
-      <div className='flex justify-between items-start h-full w-full px-1 py-6 gap-6'>
-        <Middle />
-        <RightSidebar />
-      </div>
-    </>
-  )
-}
+    <div className="flex justify-between items-start h-full w-full gap-4 overflow-hidden">
+      <Middle />
+      <RightSidebar />
+    </div>
+  );
+};
 
-export default Main
+export default Main;

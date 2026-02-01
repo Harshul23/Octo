@@ -156,62 +156,62 @@ const MainMissionContainer = ({
   const isLoading = activityLoading || analysisLoading;
 
   return (
-    <div className="h-full w-full my-2 border-2 border-neutral-600 rounded-3xl bg-[#161616] shadow-2xl overflow-hidden flex flex-col">
+    <div className="flex-1 w-full border border-neutral-700 rounded-xl bg-[#161616] shadow-xl overflow-hidden flex flex-col min-h-0">
       {/* 1. Header Area: Identity & Status */}
-      <div className="px-4 py-3 border-b-3 w-full border-neutral-600 flex justify-between items-center">
-        <div className="flex items-center gap-5">
-          <div className="p-3 bg-black rounded-xl border-2 border-neutral-500">
+      <div className="px-3 py-2 border-b border-neutral-700 w-full flex justify-between items-center shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-black rounded-lg border border-neutral-600">
             {isLoading ? (
-              <Loader2 className="text-white size-6 animate-spin" />
+              <Loader2 className="text-white size-4 animate-spin" />
             ) : (
-              <Terminal className="text-white size-6" />
+              <Terminal className="text-white size-4" />
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <span className="text-stone-500 text-[10px] font-black uppercase tracking-widest">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-stone-500 text-[9px] font-black uppercase tracking-widest">
                 Current Mission
               </span>
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusBadge.color}`}
+                className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${statusBadge.color}`}
               >
                 {statusBadge.text}
               </span>
               {analysis?.fromCache && (
-                <span className="text-neutral-500 text-[10px]">(cached)</span>
+                <span className="text-neutral-500 text-[9px]">(cached)</span>
               )}
             </div>
-            <h1 className="text-2xl font-medium text-white">
+            <h1 className="text-base font-medium text-white truncate max-w-md">
               {missionNumber ? `#${missionNumber} : ` : ""}
               {missionTitle}
             </h1>
             <div className="flex gap-1 items-center">
               {missionRepo ? (
                 <>
-                  <GitPullRequest className="size-4 text-neutral-400" />
-                  <span className="text-xs text-neutral-400">
+                  <GitPullRequest className="size-3 text-neutral-400" />
+                  <span className="text-[10px] text-neutral-400">
                     {missionRepo}
                   </span>
                 </>
               ) : (
-                <span className="text-xs text-neutral-400">
+                <span className="text-[10px] text-neutral-400">
                   Select a PR or issue to begin
                 </span>
               )}
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           {selectedMission && !analysis && (
             <button
               onClick={handleAnalyzeMission}
               disabled={analysisLoading}
-              className="px-3 py-2 text-sm flex items-center gap-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors border border-neutral-600 text-white disabled:opacity-50"
+              className="px-2 py-1 text-xs flex items-center gap-1.5 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors border border-neutral-600 text-white disabled:opacity-50"
             >
               {analysisLoading ? (
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-3 animate-spin" />
               ) : (
-                <Sparkles className="size-4" />
+                <Sparkles className="size-3" />
               )}
               Analyze
             </button>
@@ -222,51 +222,51 @@ const MainMissionContainer = ({
                 clearAnalysis();
                 setSelectedMission(null);
               }}
-              className="px-3 py-2 text-sm flex items-center gap-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors border border-neutral-600 text-white"
+              className="px-2 py-1 text-xs flex items-center gap-1.5 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors border border-neutral-600 text-white"
             >
-              <RefreshCw className="size-4" />
+              <RefreshCw className="size-3" />
               New
             </button>
           )}
           {missionUrl && (
             <button
               onClick={() => window.open(missionUrl, "_blank")}
-              className="px-3 py-2 w-24 text-sm flex items-center justify-evenly rounded-full bg-white transition-colors border text-black border-white/10 group hover:bg-neutral-200"
+              className="px-3 py-1.5 text-xs flex items-center gap-2 rounded-full bg-white transition-colors border text-black border-white/10 group hover:bg-neutral-200"
             >
               <p>View</p>
-              <LuArrowUpRight className="size-4" />
+              <LuArrowUpRight className="size-3" />
             </button>
           )}
         </div>
       </div>
 
       {/* 2. Content Body: Split Layout */}
-      <div className="flex-1 flex px-2 py-2 h-full gap-4 overflow-hidden">
+      <div className="flex-1 flex px-3 py-2 gap-3 overflow-hidden min-h-0">
         {/* Left Side: Octo's AI Insight */}
-        <div className="w-1/2 h-full flex flex-col justify-between">
-          <div className="relative p-5 w-full rounded-3xl border-neutral-800 border-2 bg-black scroll-auto overflow-y-auto custom-scrollbar flex-1 h-full">
+        <div className="w-1/2 flex flex-col">
+          <div className="relative p-3 w-full rounded-xl border-neutral-800 border bg-black overflow-y-auto custom-scrollbar flex-1">
             <div className="flex h-full w-full flex-col justify-between">
-              <div className="flex w-full flex-col items-start gap-2 mb-3">
-                <div className="flex items-center w-full gap-3">
-                  <Sparkles className="text-neutral-300 size-4" />
-                  <span className="text-white text-2xl font-medium tracking-tighter">
+              <div className="flex w-full flex-col items-start gap-1.5 mb-2">
+                <div className="flex items-center w-full gap-2">
+                  <Sparkles className="text-neutral-300 size-3" />
+                  <span className="text-white text-lg font-medium tracking-tighter">
                     Octo Status
                   </span>
                   {analysisLoading && (
-                    <Loader2 className="size-4 animate-spin text-neutral-400" />
+                    <Loader2 className="size-3 animate-spin text-neutral-400" />
                   )}
                 </div>
-                <p className="text-stone-300 text-lg leading-relaxed font-medium italic">
+                <p className="text-stone-300 text-sm leading-relaxed font-medium italic">
                   "{octoStatus}"
                 </p>
 
                 {/* Show Octo's response to questions */}
                 {octoResponse && (
-                  <div className="mt-3 p-3 bg-neutral-800/50 rounded-xl border border-neutral-700">
-                    <p className="text-emerald-400 text-sm font-medium mb-1">
+                  <div className="mt-2 p-2 bg-neutral-800/50 rounded-lg border border-neutral-700">
+                    <p className="text-emerald-400 text-xs font-medium mb-0.5">
                       Octo says:
                     </p>
-                    <p className="text-stone-300 text-sm">{octoResponse}</p>
+                    <p className="text-stone-300 text-xs">{octoResponse}</p>
                   </div>
                 )}
               </div>
@@ -274,25 +274,25 @@ const MainMissionContainer = ({
               {/* Ask Octo Input */}
               <form
                 onSubmit={handleAskOcto}
-                className="flex flex-row w-full items-center justify-between"
+                className="flex flex-row w-full items-center relative mt-auto"
               >
                 <input
                   type="text"
                   value={askInput}
                   onChange={(e) => setAskInput(e.target.value)}
                   disabled={askLoading}
-                  className="bg-neutral-800 rounded-full w-full h-10 px-4 pr-12 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-600 disabled:opacity-50"
+                  className="bg-neutral-800 rounded-full w-full h-8 px-3 pr-10 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-600 disabled:opacity-50"
                   placeholder="Ask Octo anything..."
                 />
                 <button
                   type="submit"
                   disabled={askLoading || !askInput.trim()}
-                  className="absolute right-8 disabled:opacity-30"
+                  className="absolute right-2 disabled:opacity-30"
                 >
                   {askLoading ? (
-                    <Loader2 className="size-5 animate-spin text-neutral-400" />
+                    <Loader2 className="size-4 animate-spin text-neutral-400" />
                   ) : (
-                    <SendHorizontal className="size-5 text-white hover:text-emerald-400 transition-colors" />
+                    <SendHorizontal className="size-4 text-white hover:text-emerald-400 transition-colors" />
                   )}
                 </button>
               </form>
@@ -301,34 +301,34 @@ const MainMissionContainer = ({
         </div>
 
         {/* Right Side: The "Roadmap" (Steps to take) */}
-        <div className="w-1/2 flex flex-col">
-          <h3 className="text-stone-500 text-[10px] font-black uppercase tracking-widest mb-4">
+        <div className="w-1/2 flex flex-col overflow-hidden">
+          <h3 className="text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2 shrink-0">
             Steps to Resolve
             {analysis && (
               <span className="text-emerald-500 ml-2">• AI Generated</span>
             )}
           </h3>
-          <div className="space-y-3 w-full overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-2 w-full overflow-y-auto pr-1 custom-scrollbar flex-1">
             {steps.map((step) => (
               <div
                 key={step.id}
-                className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${
+                className={`flex items-start gap-2 p-2.5 rounded-lg border transition-all ${
                   step.status === "current"
-                    ? "bg-white/5 border-neutral-700 border-2"
+                    ? "bg-white/5 border-neutral-700"
                     : step.status === "done"
-                      ? "bg-emerald-500/5 border-emerald-500/20 border-2"
-                      : "bg-transparent border-neutral-700 border-2 opacity-60"
+                      ? "bg-emerald-500/5 border-emerald-500/20"
+                      : "bg-transparent border-neutral-700 opacity-60"
                 }`}
               >
                 {step.status === "done" ? (
-                  <CheckCircle2 className="text-emerald-400 size-5 mt-0.5 shrink-0" />
+                  <CheckCircle2 className="text-emerald-400 size-4 mt-0.5 shrink-0" />
                 ) : (
                   <Circle
-                    className={`${step.status === "current" ? "text-white" : "text-stone-600"} size-5 mt-0.5 shrink-0`}
+                    className={`${step.status === "current" ? "text-white" : "text-stone-600"} size-4 mt-0.5 shrink-0`}
                   />
                 )}
                 <p
-                  className={`text-sm font-bold ${
+                  className={`text-xs font-medium ${
                     step.status === "current"
                       ? "text-white"
                       : step.status === "done"
@@ -344,12 +344,12 @@ const MainMissionContainer = ({
 
           {/* Actionable Items Quick Access */}
           {!analysis && actionableItems.length > 1 && (
-            <div className="mt-4 pt-4 border-t border-neutral-700">
-              <h4 className="text-neutral-500 text-[10px] font-bold uppercase mb-2">
-                Other items needing attention:
+            <div className="mt-2 pt-2 border-t border-neutral-700 shrink-0">
+              <h4 className="text-neutral-500 text-[9px] font-bold uppercase mb-1">
+                Other items:
               </h4>
               <div className="space-y-1">
-                {actionableItems.slice(1, 4).map((item) => (
+                {actionableItems.slice(1, 3).map((item) => (
                   <button
                     key={item.id}
                     onClick={() => {
@@ -365,10 +365,12 @@ const MainMissionContainer = ({
                         });
                       }
                     }}
-                    className="w-full text-left p-2 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors"
+                    className="w-full text-left p-1.5 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors"
                   >
-                    <p className="text-white text-xs truncate">{item.title}</p>
-                    <p className="text-neutral-500 text-[10px]">
+                    <p className="text-white text-[10px] truncate">
+                      {item.title}
+                    </p>
+                    <p className="text-neutral-500 text-[9px]">
                       {item.subtitle}
                     </p>
                   </button>
@@ -380,8 +382,8 @@ const MainMissionContainer = ({
       </div>
 
       {/* 3. Bottom Footer: AI Context Tracking */}
-      <div className="px-6 py-3 bg-black/20 flex justify-between items-center">
-        <div className="flex gap-4 text-[10px] font-medium text-stone-400">
+      <div className="px-4 py-2 bg-black/20 flex justify-between items-center shrink-0">
+        <div className="flex gap-3 text-[9px] font-medium text-stone-400">
           <span className="uppercase">Agent: Octo-AI</span>
           <span className="text-stone-500">|</span>
           <p>
@@ -400,14 +402,14 @@ const MainMissionContainer = ({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-1.5 w-24 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-1 w-20 bg-white/5 rounded-full overflow-hidden">
             <div
               className="h-full bg-neutral-200 transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="text-xs font-bold text-neutral-400 uppercase">
-            {progressPercent}% Completed
+          <span className="text-[10px] font-bold text-neutral-400 uppercase">
+            {progressPercent}%
           </span>
         </div>
       </div>

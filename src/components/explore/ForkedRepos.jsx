@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { GitFork, Star, ExternalLink, Calendar, RefreshCcw, Loader2, AlertCircle, Circle } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { fetchUserRepositories } from '../../services/githubApi';
-import { formatDistanceToNow } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import {
+  GitFork,
+  Star,
+  ExternalLink,
+  Calendar,
+  RefreshCcw,
+  Loader2,
+  AlertCircle,
+  Circle,
+} from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { fetchUserRepositories } from "../../services/githubApi";
+import { formatDistanceToNow } from "date-fns";
 
 const ForkedRepos = () => {
   const { user, getToken } = useAuth();
@@ -23,9 +32,9 @@ const ForkedRepos = () => {
         // Fetch repositories (including forks)
         // Note: fetchUserRepositories defaults to sorting by 'updated'
         const allRepos = await fetchUserRepositories(user.login, token, 100);
-        
+
         // Filter for forks
-        const forks = allRepos.filter(repo => repo.fork);
+        const forks = allRepos.filter((repo) => repo.fork);
         setRepos(forks);
       } catch (err) {
         console.error("Error fetching forks:", err);
@@ -40,33 +49,35 @@ const ForkedRepos = () => {
 
   if (!user) {
     return (
-        <div className="flex flex-col items-center justify-center h-full py-12 text-center text-gray-400">
-            <GitFork size={48} className="mb-4 opacity-50" />
-            <h3 className="text-lg font-medium text-white mb-2">Connect GitHub</h3>
-            <p className="max-w-xs mx-auto">Please connect your GitHub account to view your forked repositories.</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-full py-12 text-center text-gray-400">
+        <GitFork size={48} className="mb-4 opacity-50" />
+        <h3 className="text-lg font-medium text-white mb-2">Connect GitHub</h3>
+        <p className="max-w-xs mx-auto">
+          Please connect your GitHub account to view your forked repositories.
+        </p>
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-        <Loader2 size={32} className="animate-spin mb-3 text-blue-500" />
-        <p>Loading your forks...</p>
+      <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+        <Loader2 size={24} className="animate-spin mb-2 text-blue-500" />
+        <p className="text-sm">Loading your forks...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-red-400">
-        <AlertCircle size={32} className="mb-3" />
-        <p>{error}</p>
-        <button 
-            onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-sm transition-colors"
+      <div className="flex flex-col items-center justify-center py-8 text-red-400">
+        <AlertCircle size={24} className="mb-2" />
+        <p className="text-sm">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-3 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs transition-colors"
         >
-            Try Again
+          Try Again
         </button>
       </div>
     );
@@ -74,13 +85,15 @@ const ForkedRepos = () => {
 
   if (repos.length === 0) {
     return (
-        <div className="flex flex-col items-center justify-center py-20 text-center bg-[#161b22]/50 border border-[#30363d] rounded-xl border-dashed h-full">
-        <div className="p-4 bg-white/5 rounded-full mb-4">
-          <GitFork size={32} className="text-gray-400" />
+      <div className="flex flex-col items-center justify-center py-12 text-center bg-[#161b22]/50 border border-[#30363d] rounded-xl border-dashed h-full">
+        <div className="p-3 bg-white/5 rounded-full mb-3">
+          <GitFork size={24} className="text-gray-400" />
         </div>
-        <h3 className="text-xl font-semibold mb-2 text-white">No Forks Found</h3>
-        <p className="text-gray-400 max-w-md px-6">
-          You haven't forked any repositories yet. Fork repositories to contribute or experiment with them!
+        <h3 className="text-lg font-semibold mb-1 text-white">
+          No Forks Found
+        </h3>
+        <p className="text-gray-400 text-sm max-w-md px-4">
+          You haven't forked any repositories yet.
         </p>
       </div>
     );
@@ -89,64 +102,69 @@ const ForkedRepos = () => {
   // Helper to get language color (simplified map)
   const getLanguageColor = (lang) => {
     const colors = {
-      JavaScript: '#f1e05a',
-      TypeScript: '#3178c6',
-      Python: '#3572A5',
-      Java: '#b07219',
-      Go: '#00ADD8',
-      Rust: '#dea584',
-      HTML: '#e34c26',
-      CSS: '#563d7c',
+      JavaScript: "#f1e05a",
+      TypeScript: "#3178c6",
+      Python: "#3572A5",
+      Java: "#b07219",
+      Go: "#00ADD8",
+      Rust: "#dea584",
+      HTML: "#e34c26",
+      CSS: "#563d7c",
     };
-    return colors[lang] || '#8b949e';
+    return colors[lang] || "#8b949e";
   };
 
   return (
-    <div className="mb-8 h-full w-full flex flex-col">
-       {/* Section Header */}
-       <div className="flex items-center justify-between mb-4">
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-3 shrink-0">
         <div className="flex items-center gap-2">
-          <GitFork className="size-5 text-blue-400" />
-          <h2 className="text-xl font-bold text-white">Your Forks</h2>
+          <GitFork className="size-4 text-blue-400" />
+          <h2 className="text-lg font-bold text-white">Your Forks</h2>
           <span className="px-2 py-0.5 rounded-full bg-blue-400/20 text-blue-400 text-xs font-medium">
-            {repos.length} Repos
+            {repos.length}
           </span>
         </div>
       </div>
 
       {/* List */}
-      <div className="flex flex-col gap-4 w-full flex-1 overflow-y-auto pr-2 pb-4 sm:pr-4">
+      <div className="flex flex-col gap-3 w-full flex-1 overflow-y-auto pr-1 custom-scrollbar">
         {repos.map((repo) => (
           <div
             key={repo.id}
-            className="w-full p-5 rounded-2xl bg-[#161616] border border-white/5 hover:border-white/10 transition-all duration-300 group flex-shrink-0"
+            className="w-full p-4 rounded-xl bg-[#161616] border border-white/5 hover:border-white/10 transition-all duration-300 group shrink-0"
           >
             {/* Header */}
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3 w-full overflow-hidden">
-                <div className="size-10 rounded-xl bg-gradient-to-br from-blue-900/50 to-blue-800/30 flex-shrink-0 flex items-center justify-center text-lg font-bold text-blue-200 border border-blue-500/20">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2 w-full overflow-hidden">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-blue-900/50 to-blue-800/30 shrink-0 flex items-center justify-center text-sm font-bold text-blue-200 border border-blue-500/20">
                   {repo.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+                  <h3 className="font-semibold text-sm text-white group-hover:text-blue-400 transition-colors truncate">
                     {repo.name}
                   </h3>
                   <div className="flex items-center gap-2 text-xs text-neutral-500">
-                     {repo.language && (
-                        <div className="flex items-center gap-1">
-                        <div 
-                            className="size-2 rounded-full" 
-                            style={{ backgroundColor: getLanguageColor(repo.language) }}
+                    {repo.language && (
+                      <div className="flex items-center gap-1">
+                        <div
+                          className="size-2 rounded-full"
+                          style={{
+                            backgroundColor: getLanguageColor(repo.language),
+                          }}
                         />
                         <span>{repo.language}</span>
-                        </div>
-                     )}
-                     <span className="text-neutral-600">•</span>
-                     <span>Updated {formatDistanceToNow(new Date(repo.updated_at))} ago</span>
+                      </div>
+                    )}
+                    <span className="text-neutral-600">•</span>
+                    <span>
+                      Updated {formatDistanceToNow(new Date(repo.updated_at))}{" "}
+                      ago
+                    </span>
                   </div>
                 </div>
               </div>
-              <a 
+              <a
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -158,9 +176,9 @@ const ForkedRepos = () => {
 
             {/* Description */}
             {repo.description && (
-                <p className="text-sm text-neutral-400 mb-4 line-clamp-2">
+              <p className="text-sm text-neutral-400 mb-4 line-clamp-2">
                 {repo.description}
-                </p>
+              </p>
             )}
 
             {/* Stats / Footer */}
@@ -175,10 +193,10 @@ const ForkedRepos = () => {
                   <span>{repo.forks_count}</span>
                 </div>
                 {repo.open_issues_count > 0 && (
-                     <div className="flex items-center gap-1.5 hover:text-green-400 transition-colors">
-                     <Circle className="size-3.5 fill-current" />
-                     <span>{repo.open_issues_count} issues</span>
-                   </div>
+                  <div className="flex items-center gap-1.5 hover:text-green-400 transition-colors">
+                    <Circle className="size-3.5 fill-current" />
+                    <span>{repo.open_issues_count} issues</span>
+                  </div>
                 )}
               </div>
             </div>

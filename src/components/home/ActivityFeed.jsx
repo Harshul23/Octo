@@ -16,10 +16,10 @@ import {
 const ActivityFeed = ({ activities = [], loading = false }) => {
   if (loading) {
     return (
-      <div className="w-full mt-4 p-4 border border-neutral-700 rounded-2xl bg-[#161616]">
+      <div className="w-full mt-3 p-3 border border-neutral-700 rounded-xl bg-[#161616] shrink-0">
         <div className="flex items-center gap-2">
-          <div className="h-4 w-4 border-2 border-neutral-400 border-t-transparent rounded-full animate-spin" />
-          <span className="text-neutral-400 text-sm">Loading activity...</span>
+          <div className="h-3 w-3 border-2 border-neutral-400 border-t-transparent rounded-full animate-spin" />
+          <span className="text-neutral-400 text-xs">Loading activity...</span>
         </div>
       </div>
     );
@@ -52,22 +52,22 @@ const ActivityFeed = ({ activities = [], loading = false }) => {
   };
 
   return (
-    <div className="w-full mt-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="w-full mt-3 shrink-0">
+      <div className="flex items-center justify-between mb-2">
         <h3 className="text-stone-500 text-[10px] font-black uppercase tracking-widest">
           Recent Activity
         </h3>
         <div className="flex items-center gap-1 text-neutral-500">
           <Clock className="size-3" />
-          <span className="text-[10px]">Live updates every minute</span>
+          <span className="text-[10px]">Live updates</span>
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
         {activities.map((activity) => (
           <div
             key={activity.id}
-            className={`flex items-start gap-3 p-3 rounded-xl border transition-all hover:bg-white/5 cursor-pointer ${
+            className={`flex items-start gap-2 p-2 rounded-lg border transition-all hover:bg-white/5 cursor-pointer ${
               activity.needsAction
                 ? "border-amber-500/30 bg-amber-500/5"
                 : "border-neutral-700 bg-[#161616]"
@@ -76,7 +76,7 @@ const ActivityFeed = ({ activities = [], loading = false }) => {
           >
             {/* Icon */}
             <div
-              className={`p-2 rounded-lg ${activity.actionColor || "bg-neutral-800"}`}
+              className={`p-1.5 rounded-lg shrink-0 ${activity.actionColor || "bg-neutral-800"}`}
             >
               {getIcon(activity.icon, activity.action)}
             </div>
@@ -85,51 +85,44 @@ const ActivityFeed = ({ activities = [], loading = false }) => {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">
+                  <p className="text-white text-xs font-medium truncate">
                     {activity.title}
                   </p>
-                  <p className="text-neutral-500 text-xs truncate">
+                  <p className="text-neutral-500 text-[10px] truncate">
                     {activity.subtitle}
                   </p>
                 </div>
 
                 {/* Action Badge */}
                 <span
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${activity.actionColor || "bg-neutral-800 text-neutral-400"}`}
+                  className={`px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 ${activity.actionColor || "bg-neutral-800 text-neutral-400"}`}
                 >
                   {activity.action}
                 </span>
               </div>
 
-              {/* Preview */}
-              {activity.preview && (
-                <p className="text-neutral-400 text-xs mt-1 line-clamp-1 italic">
-                  "{activity.preview}..."
-                </p>
-              )}
-
               {/* Meta */}
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-1.5 mt-1">
                 {activity.authorAvatar && (
                   <img
                     src={activity.authorAvatar}
                     alt={activity.author}
-                    className="size-4 rounded-full"
+                    className="size-3 rounded-full"
                   />
                 )}
-                <span className="text-neutral-500 text-xs">
+                <span className="text-neutral-500 text-[10px]">
                   {activity.author}
                 </span>
-                <span className="text-neutral-600">•</span>
-                <span className="text-neutral-500 text-xs">
+                <span className="text-neutral-600 text-[10px]">•</span>
+                <span className="text-neutral-500 text-[10px]">
                   {activity.timeAgo}
                 </span>
 
                 {activity.needsAction && (
                   <>
-                    <span className="text-neutral-600">•</span>
-                    <span className="text-amber-500 text-xs font-medium">
-                      Needs attention
+                    <span className="text-neutral-600 text-[10px]">•</span>
+                    <span className="text-amber-500 text-[10px] font-medium">
+                      Action needed
                     </span>
                   </>
                 )}
@@ -137,7 +130,7 @@ const ActivityFeed = ({ activities = [], loading = false }) => {
             </div>
 
             {/* External Link */}
-            <ExternalLink className="size-4 text-neutral-600 shrink-0 mt-1" />
+            <ExternalLink className="size-3 text-neutral-600 shrink-0" />
           </div>
         ))}
       </div>
