@@ -1,28 +1,9 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    }
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
@@ -31,10 +12,7 @@
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, X-Hub-Signature-256, X-GitHub-Event"
-        }
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Hub-Signature-256, X-GitHub-Event" }
       ]
     }
   ]
