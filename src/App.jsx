@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Navbar from "./components/navbar.jsx";
 import Homepage from "./components/home/homepage.jsx";
 import LoginForm from "./components/login-form.jsx";
@@ -47,6 +48,7 @@ const App = () => {
   return (
     <AuthProvider>
       <AppContent />
+      <Analytics />
     </AuthProvider>
   );
 };
