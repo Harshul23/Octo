@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
+// In production, use relative /api path for serverless functions
+// In development, use the configured URL or default to localhost
 const AGENT_BASE_URL =
-  import.meta.env.VITE_AGENT_URL || "https://octo-alpha.vercel.app/";
+  import.meta.env.VITE_AGENT_URL ||
+  (import.meta.env.PROD ? "" : "http://localhost:5000");
 
 /**
  * Hook for interacting with the Octo AI Agent
