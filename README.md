@@ -1,4 +1,4 @@
-# Octo
+# Sup
 
 A modern, AI-powered GitHub productivity dashboard that helps developers track their contributions, manage projects, and gamify their coding journey.
 
